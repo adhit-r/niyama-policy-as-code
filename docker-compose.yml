@@ -1,0 +1,180 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: niyama-postgres
+    environment:
+      POSTGRES_DB: niyama
+      POSTGRES_USER: niyama
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U niyama"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: niyama-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # InfluxDB for Metrics
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: niyama-influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: password123
+      DOCKER_INFLUXDB_INIT_ORG: niyama
+      DOCKER_INFLUXDB_INIT_BUCKET: niyama_metrics
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: niyama_admin_token
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Elasticsearch for Audit Logs
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: niyama-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # OPA (Open Policy Agent)
+  opa:
+    image: openpolicyagent/opa:0.58.0
+    container_name: niyama-opa
+    command: >
+      run --server
+      --set=decision_logs.console=true
+      --set=status.console=true
+    ports:
+      - "8181:8181"
+    volumes:
+      - ./backend/policies:/policies
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # BitNet AI Service
+  bitnet:
+    build:
+      context: ./bitnet-server
+      dockerfile: Dockerfile
+    container_name: niyama-bitnet
+    environment:
+      - TRANSFORMERS_CACHE=/cache
+      - HF_HOME=/cache
+    ports:
+      - "8001:8000"
+    volumes:
+      - bitnet_cache:/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # Backend API (Go)
+  backend:
+    build:
+      context: ./backend-go
+      dockerfile: Dockerfile
+    container_name: niyama-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://niyama:password@postgres:5432/niyama
+      REDIS_URL: redis://redis:6379
+      OPA_URL: http://opa:8181
+      INFLUXDB_URL: http://influxdb:8086
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      BITNET_API_URL: http://bitnet:8000/v1
+      BITNET_API_KEY: dummy-key
+      JWT_SECRET: your_super_secret_jwt_key_here
+      GEMINI_API_KEY: your_gemini_api_key_here
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      opa:
+        condition: service_healthy
+      bitnet:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: niyama-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
+  influxdb_data:
+  elasticsearch_data:
+  bitnet_cache:
+
+networks:
+  default:
+    name: niyama-network
+
