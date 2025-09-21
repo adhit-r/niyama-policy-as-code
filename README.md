@@ -1,53 +1,76 @@
-# Niyama - Policy as Code Platform
+# Niyama
 
-A comprehensive Policy as Code platform that enables organizations to create, enforce, and monitor security and compliance policies across their infrastructure while providing seamless mapping to major compliance frameworks.
+**Policy as Code Platform**
 
-![Dashboard](screenshots/dashboard.png)
+A comprehensive Policy as Code platform that enables organizations to create, enforce, and monitor security and compliance policies across their infrastructure with AI-powered policy generation and seamless compliance framework mapping.
 
-## 🚀 Features
+---
 
-### 🎨 **Modern Brutalist UI Design**
+## Overview
+
+Niyama provides a modern, enterprise-ready solution for Policy as Code with a focus on developer experience, security, and compliance. Built with a brutalist design philosophy, it offers a clean, professional interface that scales from development to production environments.
+
+<div align="center">
+  <img src=".playwright-mcp/dashboard-screenshot.png" alt="Niyama Dashboard" width="800" />
+  <p><em>Dashboard Overview - Real-time metrics and system health monitoring</em></p>
+</div>
+
+---
+
+## Key Features
+
+### Modern Brutalist UI Design
 - **Professional Orange-Themed Interface**: Clean, consistent orange branding throughout
-- **Left Sidebar Navigation**: Intuitive navigation with active state highlighting
+- **Left Sidebar Navigation**: Intuitive navigation with active state highlighting  
 - **Inline Code Branding**: "niyama" styled as professional monospace code text
 - **Perfect Contrast**: High-contrast design with black text on white backgrounds
-- **Enterprise-Ready**: Professional appearance without unnecessary emojis
+- **Enterprise-Ready**: Professional appearance designed for business environments
 
-### 🤖 **AI-Powered Policy Generation**
+### AI-Powered Policy Generation
 - **Google Gemini Integration**: Natural language to policy conversion
 - **Real-time Policy Testing**: Instant policy evaluation with test inputs
 - **Policy Optimization**: AI-powered policy improvement suggestions
+- **Compliance Gap Analysis**: Automated identification of policy gaps
 
-### 📊 **Comprehensive Dashboard**
+### Comprehensive Dashboard
 - **Real-time Metrics**: Active policies, violations, compliance scores, evaluations
 - **System Health Monitoring**: API server, database, OPA engine, AI service status
 - **Quick Actions**: One-click access to common tasks
 - **Recent Alerts**: Latest policy violations and system notifications
 
-### 🛡️ **Policy Management**
-- **Advanced Policy Editor**: Monaco editor with syntax highlighting
+### Advanced Policy Management
+- **Monaco Editor**: Syntax highlighting and advanced editing capabilities
 - **Template Library**: Pre-built policy templates for common use cases
 - **Policy Testing**: Built-in test input and evaluation results
 - **Version Control**: Policy versioning and change tracking
 
-### 🔒 **Compliance & Security**
+### Enterprise Security & Compliance
 - **Comprehensive Compliance Mapping**: SOC 2, HIPAA, GDPR, ISO 27001/42001, PCI DSS, NIST, CIS
 - **Real-time Policy Enforcement**: OPA and Gatekeeper integration for Kubernetes
 - **Advanced Monitoring**: Real-time violation detection and alerting
-- **Enterprise Security**: Zero-trust architecture with SOC 2 Type II compliance
+- **Zero-trust Architecture**: Enterprise-grade security with SOC 2 Type II compliance
 
-## 🎨 UI Showcase
+---
 
-### Dashboard Overview
-The dashboard provides a comprehensive overview of your Policy as Code platform with real-time metrics, system health monitoring, and quick access to common tasks.
+## User Interface
 
 ### Policy Editor
-Advanced policy editor with syntax highlighting, real-time testing, and AI-powered policy generation capabilities.
+<div align="center">
+  <img src=".playwright-mcp/policy-editor-screenshot.png" alt="Policy Editor" width="800" />
+  <p><em>Advanced policy editor with syntax highlighting and real-time testing</em></p>
+</div>
 
 ### Template Library
-Pre-built policy templates for common use cases across different frameworks and compliance standards.
+<div align="center">
+  <img src=".playwright-mcp/templates-screenshot.png" alt="Template Library" width="800" />
+  <p><em>Pre-built policy templates for common use cases</em></p>
+</div>
 
-## 🏗️ Architecture
+---
+
+## Architecture
+
+Niyama follows a modern microservices architecture with clear separation of concerns:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -63,43 +86,48 @@ Pre-built policy templates for common use cases across different frameworks and 
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## 🛠️ Tech Stack
+---
+
+## Technology Stack
 
 ### Frontend
-- **React 18** with TypeScript
-- **Tailwind CSS** for styling
-- **Monaco Editor** for policy editing
-- **Lucide React** for icons
-- **Vite** for build tooling
+- **React 18** with TypeScript for type safety and modern development
+- **Tailwind CSS** for utility-first styling and design system
+- **Monaco Editor** for advanced code editing capabilities
+- **Lucide React** for consistent iconography
+- **Vite** for fast development and optimized builds
 
 ### Backend
-- **Go** with Gin web framework
-- **GORM** for database ORM
-- **PostgreSQL** for metadata storage
-- **InfluxDB** for metrics
-- **Elasticsearch** for audit logs
-- **Redis** for caching
-- **JWT** for authentication
+- **Go** with Gin web framework for high-performance API services
+- **GORM** for database ORM and migrations
+- **PostgreSQL** for reliable metadata storage
+- **InfluxDB** for time-series metrics storage
+- **Elasticsearch** for audit logs and search capabilities
+- **Redis** for caching and session management
+- **JWT** for secure authentication
 
 ### Infrastructure
-- **Docker** for containerization
-- **Kubernetes** for orchestration
-- **OPA** for policy evaluation
-- **Gatekeeper** for K8s policy enforcement
+- **Docker** for containerization and consistent deployments
+- **Kubernetes** for orchestration and scaling
+- **OPA** for policy evaluation engine
+- **Gatekeeper** for Kubernetes policy enforcement
 
-## 🚀 Quick Start
+---
+
+## Quick Start
 
 ### Prerequisites
+
 - [Bun](https://bun.sh) >= 1.0.0
 - [Docker](https://docker.com) and [Docker Compose](https://docs.docker.com/compose/)
-- [Kubernetes](https://kubernetes.io) (for deployment)
+- [Kubernetes](https://kubernetes.io) (for production deployment)
 
 ### Development Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/niyama.git
-   cd niyama
+   git clone https://github.com/adhit-r/niyama-policy-as-code.git
+   cd niyama-policy-as-code
    ```
 
 2. **Install dependencies**
@@ -148,7 +176,9 @@ Pre-built policy templates for common use cases across different frameworks and 
    bun run k8s:delete
    ```
 
-## 📁 Project Structure
+---
+
+## Project Structure
 
 ```
 niyama/
@@ -179,7 +209,9 @@ niyama/
 └── package.json           # Root package.json
 ```
 
-## 🔧 Configuration
+---
+
+## Configuration
 
 ### Environment Variables
 
@@ -207,10 +239,12 @@ OPA_URL=http://localhost:8181
 # Application
 NODE_ENV=development
 PORT=8000
-FRONTEND_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:3003
 ```
 
-## 🧪 Testing
+---
+
+## Testing
 
 ```bash
 # Run all tests
@@ -226,29 +260,39 @@ bun run test:frontend
 bun run test:coverage
 ```
 
-## 📊 Monitoring
+---
 
-- **Metrics**: InfluxDB + Grafana
-- **Logs**: Elasticsearch + Kibana
-- **APM**: Application performance monitoring
-- **Health Checks**: Built-in health check endpoints
+## Monitoring
 
-## 🔒 Security
+- **Metrics**: InfluxDB + Grafana for comprehensive monitoring
+- **Logs**: Elasticsearch + Kibana for log aggregation and analysis
+- **APM**: Application performance monitoring with custom dashboards
+- **Health Checks**: Built-in health check endpoints for all services
 
-- **Authentication**: JWT with refresh tokens
-- **Authorization**: Role-based access control (RBAC)
-- **Encryption**: TLS 1.3 in transit, AES-256 at rest
-- **Security Headers**: Comprehensive security headers
-- **Input Validation**: Comprehensive input sanitization
+---
 
-## 📚 Documentation
+## Security
 
-- [API Documentation](docs/api.md)
-- [Deployment Guide](docs/deployment.md)
-- [Security Guide](docs/security.md)
-- [Contributing Guide](docs/contributing.md)
+- **Authentication**: JWT with refresh tokens for secure session management
+- **Authorization**: Role-based access control (RBAC) for fine-grained permissions
+- **Encryption**: TLS 1.3 in transit, AES-256 at rest for data protection
+- **Security Headers**: Comprehensive security headers for web security
+- **Input Validation**: Comprehensive input sanitization and validation
 
-## 🤝 Contributing
+---
+
+## Documentation
+
+- [Installation Guide](.wiki/Installation-Guide)
+- [API Reference](.wiki/API-Reference)
+- [Contributing Guidelines](.wiki/Contributing-Guidelines)
+- [Project Wiki](.wiki/Home)
+
+---
+
+## Contributing
+
+We welcome contributions from the community! Please see our [Contributing Guidelines](.wiki/Contributing-Guidelines) for details on how to get started.
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -256,18 +300,23 @@ bun run test:coverage
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+---
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+---
 
-- **Documentation**: [docs.niyama.dev](https://docs.niyama.dev)
-- **Issues**: [GitHub Issues](https://github.com/your-org/niyama/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/niyama/discussions)
-- **Email**: support@niyama.dev
+## Support
 
-## 🗺️ Roadmap
+- **Documentation**: [Project Wiki](.wiki/Home)
+- **Issues**: [GitHub Issues](https://github.com/adhit-r/niyama-policy-as-code/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/adhit-r/niyama-policy-as-code/discussions)
+
+---
+
+## Roadmap
 
 - [x] **Phase 1**: MVP & Foundation (Months 1-6)
 - [ ] **Phase 2**: Enhanced Features (Months 7-12)
@@ -276,3 +325,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See the [PRD](policy-as-code-prd.md) for detailed roadmap information.
 
+---
+
+<div align="center">
+  <p><strong>Built with modern technologies for enterprise-grade Policy as Code</strong></p>
+  <p>Made with ❤️ by the Niyama team</p>
+</div>
