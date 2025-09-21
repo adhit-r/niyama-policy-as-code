@@ -1,129 +1,140 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
-  Menu, 
-  Bell, 
-  Search, 
-  User, 
+  Shield, 
+  FileText, 
   Settings, 
-  LogOut,
-  ChevronDown
+  BarChart3, 
+  User,
+  Menu,
+  X
 } from 'lucide-react';
-import { getInitials } from '../lib/utils';
 
 interface HeaderProps {
-  onMenuClick: () => void;
+  className?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
-  const { user, logout } = useAuth();
-  const [showUserMenu, setShowUserMenu] = useState(false);
+export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const navigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+    { name: 'Policies', href: '/policies', icon: Shield },
+    { name: 'Templates', href: '/templates', icon: FileText },
+    { name: 'Monitoring', href: '/monitoring', icon: BarChart3 },
+    { name: 'Settings', href: '/settings', icon: Settings },
+  ];
+
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-slate-200">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Left side */}
+    <header className={`bg-niyama-white border-b-2 border-niyama-black ${className}`}>
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
           <div className="flex items-center">
             <button
-              type="button"
-              className="lg:hidden p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              onClick={onMenuClick}
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center space-x-3 group"
             >
-              <Menu className="h-6 w-6" />
+              <div className="w-10 h-10 bg-niyama-black flex items-center justify-center shadow-brutal group-hover:shadow-brutal-lg transition-all duration-150">
+                <Shield className="w-6 h-6 text-niyama-white" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-lg font-mono text-niyama-black tracking-tight bg-niyama-gray-100 px-2 py-1 border border-niyama-black">
+                  niyama
+                </h1>
+                <p className="text-xs text-niyama-gray-600 font-medium uppercase tracking-wider">
+                  Policy as Code
+                </p>
+              </div>
             </button>
-            
-            {/* Search */}
-            <div className="hidden md:block ml-4">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-slate-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search policies, templates..."
-                  className="input pl-10 w-64"
-                />
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-1">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => navigate(item.href)}
+                  className={`
+                    flex items-center space-x-2 px-4 py-2 rounded font-medium text-sm transition-all duration-150
+                    ${isActive(item.href)
+                      ? 'bg-niyama-black text-niyama-white shadow-brutal'
+                      : 'text-niyama-gray-700 hover:bg-niyama-gray-100 hover:text-niyama-black'
+                    }
+                  `}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.name}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* User Menu */}
+          <div className="flex items-center space-x-4">
+            <button className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-niyama-accent text-niyama-white rounded font-semibold text-sm shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-150">
+              <User className="w-4 h-4" />
+              <span>Admin</span>
+            </button>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded border-2 border-niyama-black bg-niyama-white shadow-brutal hover:shadow-brutal-lg transition-all duration-150"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5 text-niyama-black" />
+              ) : (
+                <Menu className="w-5 h-5 text-niyama-black" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t-2 border-niyama-black bg-niyama-gray-100">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      navigate(item.href);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`
+                      flex items-center space-x-3 w-full px-4 py-3 rounded font-medium text-sm transition-all duration-150
+                      ${isActive(item.href)
+                        ? 'bg-niyama-black text-niyama-white shadow-brutal'
+                        : 'text-niyama-gray-700 hover:bg-niyama-white hover:text-niyama-black'
+                      }
+                    `}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.name}</span>
+                  </button>
+                );
+              })}
+              <div className="pt-4 border-t-2 border-niyama-black">
+                <button className="flex items-center space-x-3 w-full px-4 py-3 bg-niyama-accent text-niyama-white rounded font-semibold text-sm shadow-brutal">
+                  <User className="w-5 h-5" />
+                  <span>Admin User</span>
+                </button>
               </div>
             </div>
           </div>
-
-          {/* Right side */}
-          <div className="flex items-center space-x-4">
-            {/* Notifications */}
-            <button
-              type="button"
-              className="p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 relative"
-            >
-              <Bell className="h-6 w-6" />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-danger-500 rounded-full"></span>
-            </button>
-
-            {/* User menu */}
-            <div className="relative">
-              <button
-                type="button"
-                className="flex items-center space-x-3 p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                <div className="h-8 w-8 bg-primary-500 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">
-                    {getInitials(`${user?.firstName} ${user?.lastName}`)}
-                  </span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium text-charcoal-800">
-                    {user?.firstName} {user?.lastName}
-                  </p>
-                  <p className="text-xs text-slate-500 capitalize">
-                    {user?.role?.replace('_', ' ')}
-                  </p>
-                </div>
-                <ChevronDown className="h-4 w-4" />
-              </button>
-
-              {/* Dropdown menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-slate-200 z-50">
-                  <div className="py-1">
-                    <div className="px-4 py-2 border-b border-slate-200">
-                      <p className="text-sm font-medium text-charcoal-800">
-                        {user?.firstName} {user?.lastName}
-                      </p>
-                      <p className="text-xs text-slate-500">{user?.email}</p>
-                    </div>
-                    
-                    <button className="flex items-center w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
-                      <User className="h-4 w-4 mr-3" />
-                      Profile
-                    </button>
-                    
-                    <button className="flex items-center w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
-                      <Settings className="h-4 w-4 mr-3" />
-                      Settings
-                    </button>
-                    
-                    <div className="border-t border-slate-200">
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
-                      >
-                        <LogOut className="h-4 w-4 mr-3" />
-                        Sign out
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </header>
   );
 };
-

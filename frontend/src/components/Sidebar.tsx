@@ -1,117 +1,97 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard,
-  Shield,
-  FileText,
-  CheckSquare,
+  BarChart3, 
+  FileText, 
+  Code, 
+  Shield, 
+  Settings, 
+  Users,
   Activity,
-  Settings,
-  X
+  Zap
 } from 'lucide-react';
-import { cn } from '../lib/utils';
 
-interface SidebarProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+const navigationItems = [
+  { name: 'Dashboard', href: '/', icon: BarChart3 },
   { name: 'Policies', href: '/policies', icon: Shield },
   { name: 'Templates', href: '/templates', icon: FileText },
-  { name: 'Compliance', href: '/compliance', icon: CheckSquare },
+  { name: 'Policy Editor', href: '/policies/new', icon: Code },
   { name: 'Monitoring', href: '/monitoring', icon: Activity },
+  { name: 'Compliance', href: '/compliance', icon: Shield },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
+export const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(href);
+  };
+
   return (
-    <>
-      {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-grow bg-white border-r border-slate-200 pt-5 pb-4 overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4">
-            <div className="h-8 w-8 bg-primary-500 rounded-lg flex items-center justify-center">
-              <Shield className="h-5 w-5 text-white" />
+    <div className="w-64 bg-niyama-white border-r-2 border-niyama-black min-h-screen flex flex-col">
+      {/* Logo/Brand Section */}
+      <div className="p-6 border-b-2 border-niyama-black">
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-niyama-accent flex items-center justify-center shadow-brutal relative">
+            <div className="w-8 h-8 bg-niyama-black flex items-center justify-center">
+              <Shield className="w-5 h-5 text-niyama-accent" />
             </div>
-            <span className="ml-2 text-xl font-bold text-charcoal-800">Niyama</span>
           </div>
-          
-          <nav className="mt-8 flex-1 px-2 space-y-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    cn(
-                      'nav-link',
-                      isActive && 'active'
-                    )
-                  }
-                >
-                  <Icon className="h-5 w-5 mr-3" />
-                  {item.name}
-                </NavLink>
-              );
-            })}
-          </nav>
+          <div>
+            <h1 className="text-lg font-mono text-niyama-black tracking-tight bg-niyama-gray-100 px-2 py-1 border border-niyama-black">
+              niyama
+            </h1>
+            <p className="text-xs text-niyama-gray-600 font-medium uppercase tracking-wider">
+              Policy as Code
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Mobile sidebar */}
-      <div className={cn(
-        'lg:hidden fixed inset-0 z-50 flex',
-        open ? 'block' : 'hidden'
-      )}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={onClose} />
-        
-        <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-2">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          return (
             <button
-              type="button"
-              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={onClose}
+              key={item.name}
+              onClick={() => navigate(item.href)}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded font-medium text-sm transition-all duration-150
+                ${isActive(item.href)
+                  ? 'bg-niyama-accent text-niyama-black shadow-brutal'
+                  : 'text-niyama-gray-700 hover:bg-niyama-gray-100 hover:text-niyama-black'
+                }
+              `}
             >
-              <X className="h-6 w-6 text-white" />
+              <Icon className="w-5 h-5" />
+              <span>{item.name}</span>
             </button>
+          );
+        })}
+      </nav>
+
+      {/* User Section */}
+      <div className="p-4 border-t-2 border-niyama-black">
+        <div className="flex items-center space-x-3 p-3 bg-niyama-gray-100 rounded">
+          <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
+            <Users className="w-4 h-4 text-niyama-black" />
           </div>
-          
-          <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-            <div className="flex-shrink-0 flex items-center px-4">
-              <div className="h-8 w-8 bg-primary-500 rounded-lg flex items-center justify-center">
-                <Shield className="h-5 w-5 text-white" />
-              </div>
-              <span className="ml-2 text-xl font-bold text-charcoal-800">Niyama</span>
-            </div>
-            
-            <nav className="mt-8 px-2 space-y-1">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    className={({ isActive }) =>
-                      cn(
-                        'nav-link',
-                        isActive && 'active'
-                      )
-                    }
-                    onClick={onClose}
-                  >
-                    <Icon className="h-5 w-5 mr-3" />
-                    {item.name}
-                  </NavLink>
-                );
-              })}
-            </nav>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-niyama-black truncate">
+              Admin User
+            </p>
+            <p className="text-xs text-niyama-gray-600 truncate">
+              admin@niyama.dev
+            </p>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
-

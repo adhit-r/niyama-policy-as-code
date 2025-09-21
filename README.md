@@ -2,21 +2,57 @@
 
 A comprehensive Policy as Code platform that enables organizations to create, enforce, and monitor security and compliance policies across their infrastructure while providing seamless mapping to major compliance frameworks.
 
+![Dashboard](screenshots/dashboard.png)
+
 ## 🚀 Features
 
-- **AI-Powered Policy Generation**: Natural language to policy conversion using Google Gemini
+### 🎨 **Modern Brutalist UI Design**
+- **Professional Orange-Themed Interface**: Clean, consistent orange branding throughout
+- **Left Sidebar Navigation**: Intuitive navigation with active state highlighting
+- **Inline Code Branding**: "niyama" styled as professional monospace code text
+- **Perfect Contrast**: High-contrast design with black text on white backgrounds
+- **Enterprise-Ready**: Professional appearance without unnecessary emojis
+
+### 🤖 **AI-Powered Policy Generation**
+- **Google Gemini Integration**: Natural language to policy conversion
+- **Real-time Policy Testing**: Instant policy evaluation with test inputs
+- **Policy Optimization**: AI-powered policy improvement suggestions
+
+### 📊 **Comprehensive Dashboard**
+- **Real-time Metrics**: Active policies, violations, compliance scores, evaluations
+- **System Health Monitoring**: API server, database, OPA engine, AI service status
+- **Quick Actions**: One-click access to common tasks
+- **Recent Alerts**: Latest policy violations and system notifications
+
+### 🛡️ **Policy Management**
+- **Advanced Policy Editor**: Monaco editor with syntax highlighting
+- **Template Library**: Pre-built policy templates for common use cases
+- **Policy Testing**: Built-in test input and evaluation results
+- **Version Control**: Policy versioning and change tracking
+
+### 🔒 **Compliance & Security**
 - **Comprehensive Compliance Mapping**: SOC 2, HIPAA, GDPR, ISO 27001/42001, PCI DSS, NIST, CIS
 - **Real-time Policy Enforcement**: OPA and Gatekeeper integration for Kubernetes
 - **Advanced Monitoring**: Real-time violation detection and alerting
 - **Enterprise Security**: Zero-trust architecture with SOC 2 Type II compliance
-- **Developer Experience**: Intuitive UI with advanced policy editor
+
+## 🎨 UI Showcase
+
+### Dashboard Overview
+The dashboard provides a comprehensive overview of your Policy as Code platform with real-time metrics, system health monitoring, and quick access to common tasks.
+
+### Policy Editor
+Advanced policy editor with syntax highlighting, real-time testing, and AI-powered policy generation capabilities.
+
+### Template Library
+Pre-built policy templates for common use cases across different frameworks and compliance standards.
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend API   │    │   Policy Engine │
-│   (React)       │◄──►│   (Node.js)     │◄──►│   (OPA)         │
+│   (React)       │◄──►│   (Go/Gin)      │◄──►│   (OPA)         │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
@@ -37,12 +73,13 @@ A comprehensive Policy as Code platform that enables organizations to create, en
 - **Vite** for build tooling
 
 ### Backend
-- **Node.js** with TypeScript
-- **Express.js** for API framework
+- **Go** with Gin web framework
+- **GORM** for database ORM
 - **PostgreSQL** for metadata storage
 - **InfluxDB** for metrics
 - **Elasticsearch** for audit logs
 - **Redis** for caching
+- **JWT** for authentication
 
 ### Infrastructure
 - **Docker** for containerization
@@ -82,7 +119,7 @@ A comprehensive Policy as Code platform that enables organizations to create, en
    ```
 
 5. **Access the application**
-   - Frontend: http://localhost:3000
+   - Frontend: http://localhost:3003
    - Backend API: http://localhost:8000
    - API Documentation: http://localhost:8000/docs
 
@@ -125,17 +162,17 @@ niyama/
 │   │   └── utils/          # Utility functions
 │   ├── public/             # Static assets
 │   └── package.json
-├── backend/                 # Node.js backend API
-│   ├── src/
-│   │   ├── controllers/    # API controllers
+├── backend-go/              # Go backend API
+│   ├── internal/
+│   │   ├── handlers/       # HTTP handlers
 │   │   ├── services/       # Business logic
 │   │   ├── models/         # Data models
-│   │   ├── middleware/     # Express middleware
-│   │   ├── routes/         # API routes
-│   │   ├── utils/          # Utility functions
-│   │   └── types/          # TypeScript type definitions
-│   ├── tests/              # Backend tests
-│   └── package.json
+│   │   ├── middleware/     # HTTP middleware
+│   │   ├── config/         # Configuration
+│   │   ├── database/       # Database connection
+│   │   └── utils/          # Utility functions
+│   ├── main.go             # Application entry point
+│   └── go.mod              # Go module definition
 ├── k8s/                    # Kubernetes manifests
 ├── docker-compose.yml      # Docker Compose configuration
 ├── Dockerfile              # Docker configuration

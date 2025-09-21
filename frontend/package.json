@@ -4,7 +4,7 @@
   "description": "Niyama Policy as Code Platform - Frontend",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3001",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",

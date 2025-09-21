@@ -1,44 +1,14 @@
 {
-  "name": "niyama",
+  "name": "niyama-simple-backend",
   "version": "1.0.0",
-  "description": "Policy as Code platform with AI-powered policy generation and comprehensive compliance mapping",
-  "main": "index.js",
+  "description": "Simple working backend for Niyama",
+  "main": "simple-backend.js",
   "scripts": {
-    "dev": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
-    "dev:backend": "cd backend && bun run dev",
-    "dev:frontend": "cd frontend && bun run dev",
-    "build": "bun run build:backend && bun run build:frontend",
-    "build:backend": "cd backend && bun run build",
-    "build:frontend": "cd frontend && bun run build",
-    "test": "bun run test:backend && bun run test:frontend",
-    "test:backend": "cd backend && bun run test",
-    "test:frontend": "cd frontend && bun run test",
-    "lint": "bun run lint:backend && bun run lint:frontend",
-    "lint:backend": "cd backend && bun run lint",
-    "lint:frontend": "cd frontend && bun run lint",
-    "docker:build": "docker-compose build",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "k8s:deploy": "kubectl apply -f k8s/",
-    "k8s:delete": "kubectl delete -f k8s/"
+    "start": "node simple-backend.js",
+    "dev": "node simple-backend.js"
   },
-  "keywords": [
-    "policy-as-code",
-    "opa",
-    "gatekeeper",
-    "compliance",
-    "security",
-    "kubernetes",
-    "ai"
-  ],
-  "author": "Niyama Team",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.2",
-    "@types/node": "^20.10.0"
-  },
-  "engines": {
-    "bun": ">=1.0.0"
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
   }
 }
-
