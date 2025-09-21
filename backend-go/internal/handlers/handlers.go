@@ -11,7 +11,6 @@ type Handlers struct {
 	Template   *TemplateHandler
 	Compliance *ComplianceHandler
 	AI         *AIHandler
-	BitNet     *BitNetHandler
 	Monitoring *MonitoringHandler
 	User       *UserHandler
 }
@@ -24,7 +23,6 @@ func NewHandlers(services *services.Services) *Handlers {
 		Template:   NewTemplateHandler(services.Template),
 		Compliance: NewComplianceHandler(services.Compliance),
 		AI:         NewAIHandler(services.AI),
-		BitNet:     NewBitNetHandler(),
 		Monitoring: NewMonitoringHandler(services.Monitoring),
 		User:       NewUserHandler(services.User),
 	}

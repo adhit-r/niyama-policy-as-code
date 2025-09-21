@@ -7,54 +7,56 @@ import (
 )
 
 type User struct {
-	ID        uint           `json:"id" gorm:"primaryKey"`
-	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
-	Username  string         `json:"username" gorm:"uniqueIndex;not null"`
-	Password  string         `json:"-" gorm:"not null"`
-	FirstName string         `json:"first_name"`
-	LastName  string         `json:"last_name"`
-	Role      UserRole       `json:"role" gorm:"default:user"`
-	IsActive  bool           `json:"is_active" gorm:"default:true"`
-	LastLogin *time.Time     `json:"last_login"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+	ID           uint           `json:"id" gorm:"primaryKey"`
+	Email        string         `json:"email" gorm:"uniqueIndex;not null"`
+	Username     string         `json:"username" gorm:"uniqueIndex;not null"`
+	Password     string         `json:"-" gorm:"not null"`
+	FirstName    string         `json:"first_name"`
+	LastName     string         `json:"last_name"`
+	Role         GlobalUserRole `json:"role" gorm:"default:user"` // Global role for backward compatibility
+	IsActive     bool           `json:"is_active" gorm:"default:true"`
+	LastLogin    *time.Time     `json:"last_login"`
+	DefaultOrgID *uint          `json:"default_org_id"`
+	DefaultOrg   *Organization  `json:"default_org" gorm:"foreignKey:DefaultOrgID"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	DeletedAt    gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-type UserRole string
+type GlobalUserRole string
 
 const (
-	RoleAdmin       UserRole = "admin"
-	RoleCompliance  UserRole = "compliance"
-	RoleDeveloper   UserRole = "developer"
-	RoleAuditor     UserRole = "auditor"
-	RoleUser        UserRole = "user"
+	GlobalRoleAdmin      GlobalUserRole = "admin"
+	GlobalRoleCompliance GlobalUserRole = "compliance"
+	GlobalRoleDeveloper  GlobalUserRole = "developer"
+	GlobalRoleAuditor    GlobalUserRole = "auditor"
+	GlobalRoleUser       GlobalUserRole = "user"
 )
 
-func (r UserRole) String() string {
+func (r GlobalUserRole) String() string {
 	return string(r)
 }
 
-func (r UserRole) IsValid() bool {
+func (r GlobalUserRole) IsValid() bool {
 	switch r {
-	case RoleAdmin, RoleCompliance, RoleDeveloper, RoleAuditor, RoleUser:
+	case GlobalRoleAdmin, GlobalRoleCompliance, GlobalRoleDeveloper, GlobalRoleAuditor, GlobalRoleUser:
 		return true
 	default:
 		return false
 	}
 }
 
-func (r UserRole) HasPermission(permission string) bool {
+func (r GlobalUserRole) HasPermission(permission string) bool {
 	switch r {
-	case RoleAdmin:
+	case GlobalRoleAdmin:
 		return true
-	case RoleCompliance:
+	case GlobalRoleCompliance:
 		return permission == "read" || permission == "compliance"
-	case RoleDeveloper:
+	case GlobalRoleDeveloper:
 		return permission == "read" || permission == "write" || permission == "policy"
-	case RoleAuditor:
+	case GlobalRoleAuditor:
 		return permission == "read" || permission == "audit"
-	case RoleUser:
+	case GlobalRoleUser:
 		return permission == "read"
 	default:
 		return false

@@ -105,7 +105,7 @@ func (s *AuthService) Register(req *RegisterRequest) (*AuthResponse, error) {
 		Password:  hashedPassword,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
-		Role:      models.RoleUser,
+		Role:      models.GlobalRoleUser,
 		IsActive:  true,
 	}
 
