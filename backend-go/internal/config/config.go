@@ -50,7 +50,7 @@ func Load() *Config {
 		Environment: getEnv("NODE_ENV", "development"),
 		Port:        getEnv("PORT", "8000"),
 		Database: DatabaseConfig{
-			URL: getEnv("DATABASE_URL", "postgresql://niyama:password@localhost:5432/niyama"),
+			URL: getEnv("DATABASE_URL", "niyama.db"),
 		},
 		Redis: RedisConfig{
 			URL: getEnv("REDIS_URL", "redis://localhost:6379"),
