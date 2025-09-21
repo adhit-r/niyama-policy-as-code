@@ -29,13 +29,20 @@ func main() {
 		log.Printf("Warning: Database connection failed: %v", err)
 		log.Println("Running in development mode without database")
 		db = nil
+	} else {
+		// Seed database with sample data in development
+		if cfg.Environment == "development" {
+			if err := db.SeedDatabase(); err != nil {
+				log.Printf("Warning: Failed to seed database: %v", err)
+			}
+		}
 	}
 
 	// Initialize services
 	services := services.NewServices(db, cfg)
 
 	// Initialize handlers
-	handlers := handlers.NewHandlers(services)
+	handlers := handlers.NewHandlers(services, db, cfg)
 
 	// Setup Gin router
 	router := setupRouter(handlers, cfg)
@@ -69,9 +76,12 @@ func setupRouter(handlers *handlers.Handlers, cfg *config.Config) *gin.Engine {
 	router.Use(middleware.CORS(cfg))
 	router.Use(middleware.RateLimit())
 	router.Use(middleware.SecurityHeaders())
+	router.Use(middleware.AuditLogger())
 
-	// Health check
+	// Health check endpoints
 	router.GET("/health", handlers.Health.HealthCheck)
+	router.GET("/health/ready", handlers.Health.ReadinessCheck)
+	router.GET("/health/live", handlers.Health.LivenessCheck)
 
 	// API routes (no auth required for development)
 	api := router.Group("/api/v1")

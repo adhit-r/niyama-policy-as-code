@@ -240,3 +240,6 @@ transformers_cache/
 # Local development files
 local/
 dev/
+
+# Archive directory for temporary/old files
+archive/

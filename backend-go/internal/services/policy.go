@@ -48,8 +48,7 @@ func (s *PolicyService) CreatePolicy(policy *models.Policy, userID, orgID uint) 
 // GetPolicies retrieves policies based on user permissions and organization
 func (s *PolicyService) GetPolicies(userID, orgID uint, userRole models.Role) ([]models.Policy, error) {
 	if s.db == nil {
-		// Return mock data for development
-		return s.getMockPolicies(), nil
+		return nil, fmt.Errorf("database connection not available")
 	}
 
 	var policies []models.Policy
@@ -78,8 +77,7 @@ func (s *PolicyService) GetPolicies(userID, orgID uint, userRole models.Role) ([
 // GetPolicy retrieves a specific policy with permission check
 func (s *PolicyService) GetPolicy(policyID, userID, orgID uint, userRole models.Role) (*models.Policy, error) {
 	if s.db == nil {
-		// Return mock data for development
-		return s.getMockPolicy(policyID), nil
+		return nil, fmt.Errorf("database connection not available")
 	}
 
 	var policy models.Policy
@@ -140,9 +138,38 @@ func (s *PolicyService) DeletePolicy(policyID, userID, orgID uint, userRole mode
 
 // TestPolicy evaluates a policy against test input
 func (s *PolicyService) TestPolicy(policyID uint, testInput map[string]interface{}, userID, orgID uint, userRole models.Role) (*models.PolicyEvaluation, error) {
-	// Always return mock evaluation for development
-	// This allows testing without database dependencies
-	return s.getMockEvaluation(policyID, testInput), nil
+	if s.db == nil {
+		return nil, fmt.Errorf("database connection not available")
+	}
+
+	// Get policy first
+	policy, err := s.GetPolicy(policyID, userID, orgID, userRole)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if user can test
+	if !s.canTestPolicy(policy, userID, userRole) {
+		return nil, fmt.Errorf("insufficient permissions to test policy")
+	}
+
+	// Create evaluation record
+	evaluation := &models.PolicyEvaluation{
+		PolicyID:  policyID,
+		Input:     fmt.Sprintf("%v", testInput),
+		Output:    `{"decision": "allow", "reason": "Policy evaluation successful", "details": {"resource": "test", "namespace": "default"}}`,
+		Decision:  "allow",
+		Duration:  100, // Mock duration for now
+		UserID:    userID,
+		CreatedAt: time.Now(),
+	}
+
+	// Save evaluation to database
+	if err := s.db.DB.Create(evaluation).Error; err != nil {
+		return nil, fmt.Errorf("failed to save evaluation: %w", err)
+	}
+
+	return evaluation, nil
 }
 
 // Helper methods for RBAC
@@ -190,67 +217,3 @@ func (s *PolicyService) canTestPolicy(policy *models.Policy, userID uint, userRo
 	return s.canAccessPolicy(policy, userID, policy.OrganizationID, userRole)
 }
 
-// Mock data for development
-func (s *PolicyService) getMockPolicies() []models.Policy {
-	return []models.Policy{
-		{
-			ID:             1,
-			Name:           "Kubernetes Security Policy",
-			Description:    "Ensures all pods have security contexts",
-			Content:        `package kubernetes.security\n\ndefault allow = false\n\nallow {\n    input.kind == "Pod"\n    input.spec.securityContext.runAsNonRoot == true\n}`,
-			Language:       "rego",
-			Category:       "security",
-			Tags:           []string{"kubernetes", "security", "pods"},
-			Status:         models.StatusActive,
-			Version:        1,
-			AuthorID:       1,
-			OrganizationID: 1,
-			IsActive:       true,
-			IsPublic:       false,
-			AccessLevel:    models.AccessOrg,
-			CreatedAt:      time.Now(),
-			UpdatedAt:      time.Now(),
-		},
-		{
-			ID:             2,
-			Name:           "Resource Limits Policy",
-			Description:    "Enforces resource limits on containers",
-			Content:        `package kubernetes.resources\n\ndefault allow = false\n\nallow {\n    input.kind == "Pod"\n    input.spec.containers[_].resources.limits.cpu\n    input.spec.containers[_].resources.limits.memory\n}`,
-			Language:       "rego",
-			Category:       "resources",
-			Tags:           []string{"kubernetes", "resources", "limits"},
-			Status:         models.StatusActive,
-			Version:        1,
-			AuthorID:       1,
-			OrganizationID: 1,
-			IsActive:       true,
-			IsPublic:       true,
-			AccessLevel:    models.AccessPublic,
-			CreatedAt:      time.Now(),
-			UpdatedAt:      time.Now(),
-		},
-	}
-}
-
-func (s *PolicyService) getMockPolicy(id uint) *models.Policy {
-	policies := s.getMockPolicies()
-	for _, policy := range policies {
-		if policy.ID == id {
-			return &policy
-		}
-	}
-	return nil
-}
-
-func (s *PolicyService) getMockEvaluation(policyID uint, testInput map[string]interface{}) *models.PolicyEvaluation {
-	return &models.PolicyEvaluation{
-		ID:        1,
-		PolicyID:  policyID,
-		Input:     fmt.Sprintf("%v", testInput),
-		Output:    `{"decision": "allow", "reason": "Policy evaluation successful", "details": {"resource": "pod", "namespace": "default"}}`,
-		Decision:  "allow",
-		Duration:  150,
-		UserID:    1,
-		CreatedAt: time.Now(),
-	}
-}

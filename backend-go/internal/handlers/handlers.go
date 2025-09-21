@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"niyama-backend/internal/config"
+	"niyama-backend/internal/database"
 	"niyama-backend/internal/services"
 )
 
@@ -15,9 +17,9 @@ type Handlers struct {
 	User       *UserHandler
 }
 
-func NewHandlers(services *services.Services) *Handlers {
+func NewHandlers(services *services.Services, db *database.Database, cfg *config.Config) *Handlers {
 	return &Handlers{
-		Health:     NewHealthHandler(),
+		Health:     NewHealthHandler(db, cfg),
 		Auth:       NewAuthHandler(services.Auth),
 		Policy:     NewPolicyHandler(services.Policy),
 		Template:   NewTemplateHandler(services.Template),
