@@ -13,7 +13,7 @@ type User struct {
 	Password     string         `json:"-" gorm:"not null"`
 	FirstName    string         `json:"first_name"`
 	LastName     string         `json:"last_name"`
-	Role         GlobalUserRole `json:"role" gorm:"default:user"` // Global role for backward compatibility
+	Role         GlobalUserRole `json:"role" gorm:"default:user"`
 	IsActive     bool           `json:"is_active" gorm:"default:true"`
 	LastLogin    *time.Time     `json:"last_login"`
 	DefaultOrgID *uint          `json:"default_org_id"`
@@ -46,19 +46,12 @@ func (r GlobalUserRole) IsValid() bool {
 	}
 }
 
-func (r GlobalUserRole) HasPermission(permission string) bool {
-	switch r {
-	case GlobalRoleAdmin:
-		return true
-	case GlobalRoleCompliance:
-		return permission == "read" || permission == "compliance"
-	case GlobalRoleDeveloper:
-		return permission == "read" || permission == "write" || permission == "policy"
-	case GlobalRoleAuditor:
-		return permission == "read" || permission == "audit"
-	case GlobalRoleUser:
-		return permission == "read"
-	default:
-		return false
+func (r GlobalUserRole) HasPermission(permission Permission) bool {
+	permissions := GetGlobalPermissionsForRole(r)
+	for _, p := range permissions {
+		if p == permission {
+			return true
+		}
 	}
+	return false
 }

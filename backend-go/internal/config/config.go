@@ -18,7 +18,15 @@ type Config struct {
 }
 
 type DatabaseConfig struct {
-	URL string
+	URL      string
+	Host     string
+	Port     int
+	User     string
+	Password string
+	Name     string
+	SSLMode  string
+	MaxConns int
+	MinConns int
 }
 
 type RedisConfig struct {
@@ -41,7 +49,7 @@ type AIConfig struct {
 }
 
 type MonitoringConfig struct {
-	InfluxDBURL    string
+	InfluxDBURL      string
 	ElasticsearchURL string
 }
 
@@ -50,7 +58,15 @@ func Load() *Config {
 		Environment: getEnv("NODE_ENV", "development"),
 		Port:        getEnv("PORT", "8000"),
 		Database: DatabaseConfig{
-			URL: getEnv("DATABASE_URL", "postgresql://niyama:password@localhost:5432/niyama"),
+			URL:      getEnv("DATABASE_URL", "postgresql://niyama:niyama@localhost:5432/niyama"),
+			Host:     getEnv("DB_HOST", "localhost"),
+			Port:     getIntEnv("DB_PORT", 5432),
+			User:     getEnv("DB_USER", "niyama"),
+			Password: getEnv("DB_PASSWORD", "niyama"),
+			Name:     getEnv("DB_NAME", "niyama"),
+			SSLMode:  getEnv("DB_SSL_MODE", "disable"),
+			MaxConns: getIntEnv("DB_MAX_CONNS", 25),
+			MinConns: getIntEnv("DB_MIN_CONNS", 5),
 		},
 		Redis: RedisConfig{
 			URL: getEnv("REDIS_URL", "redis://localhost:6379"),
@@ -81,21 +97,30 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
+func getIntEnv(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
+	}
+	return defaultValue
+}
+
 func getDurationEnv(key, defaultValue string) time.Duration {
 	value := getEnv(key, defaultValue)
-	
+
 	// Parse duration (e.g., "7d", "24h", "30m")
 	if duration, err := time.ParseDuration(value); err == nil {
 		return duration
 	}
-	
+
 	// Handle day format
 	if len(value) > 1 && value[len(value)-1] == 'd' {
 		if days, err := strconv.Atoi(value[:len(value)-1]); err == nil {
 			return time.Duration(days) * 24 * time.Hour
 		}
 	}
-	
+
 	// Default to 7 days
 	return 7 * 24 * time.Hour
 }

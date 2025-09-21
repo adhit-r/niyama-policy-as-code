@@ -38,7 +38,7 @@ func main() {
 	handlers := handlers.NewHandlers(services)
 
 	// Setup Gin router
-	router := setupRouter(handlers, cfg)
+	router := setupRouter(handlers, cfg, db)
 
 	// Start server
 	port := os.Getenv("PORT")
@@ -55,7 +55,7 @@ func main() {
 	}
 }
 
-func setupRouter(handlers *handlers.Handlers, cfg *config.Config) *gin.Engine {
+func setupRouter(handlers *handlers.Handlers, cfg *config.Config, db *database.Database) *gin.Engine {
 	// Set Gin mode
 	if cfg.Environment == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -82,8 +82,8 @@ func setupRouter(handlers *handlers.Handlers, cfg *config.Config) *gin.Engine {
 			auth.POST("/login", handlers.Auth.Login)
 			auth.POST("/register", handlers.Auth.Register)
 			auth.POST("/refresh", handlers.Auth.RefreshToken)
-			auth.GET("/me", middleware.AuthRequired(cfg), handlers.Auth.GetCurrentUser)
-			auth.POST("/logout", middleware.AuthRequired(cfg), handlers.Auth.Logout)
+			auth.GET("/me", middleware.AuthRequired(cfg, db), handlers.Auth.GetCurrentUser)
+			auth.POST("/logout", middleware.AuthRequired(cfg, db), handlers.Auth.Logout)
 		}
 
 		// Policy routes (no auth required for development)

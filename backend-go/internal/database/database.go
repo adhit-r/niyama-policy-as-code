@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"niyama-backend/internal/config"
 	"niyama-backend/internal/models"
@@ -25,12 +26,18 @@ func Initialize(cfg *config.Config) (*Database, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// Test connection
+	// Get underlying sql.DB for connection pool configuration
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get database instance: %w", err)
 	}
 
+	// Configure connection pool
+	sqlDB.SetMaxOpenConns(cfg.Database.MaxConns)
+	sqlDB.SetMaxIdleConns(cfg.Database.MinConns)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	// Test connection
 	if err := sqlDB.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
@@ -40,7 +47,8 @@ func Initialize(cfg *config.Config) (*Database, error) {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}
 
-	log.Println("✅ Database connected and migrated successfully")
+	log.Printf("✅ Database connected and migrated successfully (MaxConns: %d, MinConns: %d)",
+		cfg.Database.MaxConns, cfg.Database.MinConns)
 
 	return &Database{DB: db}, nil
 }
@@ -48,6 +56,8 @@ func Initialize(cfg *config.Config) (*Database, error) {
 func migrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.User{},
+		&models.Organization{},
+		&models.UserOrganizationRole{},
 		&models.Policy{},
 		&models.PolicyTemplate{},
 		&models.PolicyEvaluation{},

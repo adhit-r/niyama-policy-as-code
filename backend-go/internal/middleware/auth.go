@@ -5,12 +5,14 @@ import (
 	"strings"
 
 	"niyama-backend/internal/config"
+	"niyama-backend/internal/database"
+	"niyama-backend/internal/models"
 	"niyama-backend/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthRequired(cfg *config.Config) gin.HandlerFunc {
+func AuthRequired(cfg *config.Config, db *database.Database) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -46,16 +48,38 @@ func AuthRequired(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Set user info in context
-		c.Set("user_id", claims.UserID)
-		c.Set("user_email", claims.Email)
-		c.Set("user_role", claims.Role)
+		// Get user from database
+		var user models.User
+		if err := db.DB.First(&user, claims.UserID).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "User not found",
+			})
+			c.Abort()
+			return
+		}
+
+		// Check if user is active
+		if !user.IsActive {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "User account is inactive",
+			})
+			c.Abort()
+			return
+		}
+
+		// Set user in context
+		c.Set("user", &user)
+		c.Set("user_id", user.ID)
+		c.Set("user_email", user.Email)
+		c.Set("user_role", string(user.Role))
 
 		c.Next()
 	}
 }
 
-func RequireRole(requiredRole string) gin.HandlerFunc {
+func RequireLegacyRole(requiredRole string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole, exists := c.Get("user_role")
 		if !exists {

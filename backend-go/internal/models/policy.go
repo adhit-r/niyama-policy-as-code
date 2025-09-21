@@ -7,27 +7,23 @@ import (
 )
 
 type Policy struct {
-	ID             uint            `json:"id" gorm:"primaryKey"`
-	Name           string          `json:"name" gorm:"not null"`
-	Description    string          `json:"description"`
-	Content        string          `json:"content" gorm:"type:text"`
-	Language       string          `json:"language" gorm:"default:rego"`
-	Category       string          `json:"category"`
-	Tags           []string        `json:"tags" gorm:"serializer:json"`
-	Status         PolicyStatus    `json:"status" gorm:"default:draft"`
-	Version        int             `json:"version" gorm:"default:1"`
-	AuthorID       uint            `json:"author_id"`
-	Author         User            `json:"author" gorm:"foreignKey:AuthorID"`
-	OrganizationID uint            `json:"organization_id" gorm:"not null"`
-	Organization   Organization    `json:"organization" gorm:"foreignKey:OrganizationID"`
-	TemplateID     *uint           `json:"template_id"`
-	Template       *PolicyTemplate `json:"template" gorm:"foreignKey:TemplateID"`
-	IsActive       bool            `json:"is_active" gorm:"default:true"`
-	IsPublic       bool            `json:"is_public" gorm:"default:false"`
-	AccessLevel    AccessLevel     `json:"access_level" gorm:"default:private"`
-	CreatedAt      time.Time       `json:"created_at"`
-	UpdatedAt      time.Time       `json:"updated_at"`
-	DeletedAt      gorm.DeletedAt  `json:"-" gorm:"index"`
+	ID             uint                   `json:"id" gorm:"primaryKey"`
+	Name           string                 `json:"name" gorm:"not null"`
+	Description    string                 `json:"description"`
+	Content        string                 `json:"content" gorm:"type:text"`
+	Language       string                 `json:"language" gorm:"default:rego"`
+	Category       string                 `json:"category"`
+	AccessLevel    AccessLevel            `json:"access_level" gorm:"default:private"`
+	Status         PolicyStatus           `json:"status" gorm:"default:draft"`
+	AuthorID       uint                   `json:"author_id"`
+	Author         User                   `json:"author" gorm:"foreignKey:AuthorID"`
+	OrganizationID uint                   `json:"organization_id"`
+	Organization   Organization           `json:"organization" gorm:"foreignKey:OrganizationID"`
+	Tags           []string               `json:"tags" gorm:"serializer:json"`
+	Metadata       map[string]interface{} `json:"metadata" gorm:"serializer:json"`
+	CreatedAt      time.Time              `json:"created_at"`
+	UpdatedAt      time.Time              `json:"updated_at"`
+	DeletedAt      gorm.DeletedAt         `json:"-" gorm:"index"`
 }
 
 type PolicyStatus string
@@ -109,9 +105,9 @@ func (a AccessLevel) IsValid() bool {
 // Organization represents a tenant/organization
 type Organization struct {
 	ID          uint                   `json:"id" gorm:"primaryKey"`
-	Name        string                 `json:"name" gorm:"not null;unique"`
+	Name        string                 `json:"name" gorm:"not null"`
+	Slug        string                 `json:"slug" gorm:"uniqueIndex;not null"`
 	Description string                 `json:"description"`
-	Domain      string                 `json:"domain"`
 	Settings    map[string]interface{} `json:"settings" gorm:"serializer:json"`
 	IsActive    bool                   `json:"is_active" gorm:"default:true"`
 	CreatedAt   time.Time              `json:"created_at"`
@@ -155,4 +151,14 @@ func (r Role) IsValid() bool {
 	default:
 		return false
 	}
+}
+
+func (r Role) HasPermission(permission Permission) bool {
+	permissions := GetPermissionsForRole(r)
+	for _, p := range permissions {
+		if p == permission {
+			return true
+		}
+	}
+	return false
 }

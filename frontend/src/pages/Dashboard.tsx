@@ -12,32 +12,93 @@ import {
   Zap,
   BarChart3,
   Settings,
-  Plus
+  Plus,
+  RefreshCw,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
+import { ErrorBoundary } from '../components/ui/ErrorBoundary';
+import { Toast } from '../components/ui/Toast';
 
 export const Dashboard: React.FC = () => {
-  const { data: metrics, isLoading: metricsLoading } = useQuery(
+  const { 
+    data: metrics, 
+    isLoading: metricsLoading, 
+    error: metricsError, 
+    refetch: refetchMetrics,
+    isFetching: metricsFetching 
+  } = useQuery(
     'dashboard-metrics',
     () => api.getMetrics(),
     {
       refetchInterval: 30000, // Refresh every 30 seconds
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      onError: (error) => {
+        console.error('Failed to fetch metrics:', error);
+      }
     }
   );
 
-  const { data: alerts, isLoading: alertsLoading } = useQuery(
+  const { 
+    data: alerts, 
+    isLoading: alertsLoading, 
+    error: alertsError, 
+    refetch: refetchAlerts,
+    isFetching: alertsFetching 
+  } = useQuery(
     'dashboard-alerts',
     () => api.getAlerts({ limit: 5 }),
     {
       refetchInterval: 60000, // Refresh every minute
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      onError: (error) => {
+        console.error('Failed to fetch alerts:', error);
+      }
     }
   );
+
+  const handleRetry = () => {
+    refetchMetrics();
+    refetchAlerts();
+  };
+
+  const isOffline = !navigator.onLine;
 
   if (metricsLoading || alertsLoading) {
     return (
       <div className="container mx-auto px-6 py-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="w-16 h-16 border-4 border-niyama-black border-t-transparent animate-spin"></div>
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
+          <LoadingSpinner size="lg" />
+          <p className="text-niyama-gray-600">Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (metricsError || alertsError) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
+          <div className="w-16 h-16 bg-niyama-error flex items-center justify-center shadow-brutal">
+            <AlertTriangle className="w-8 h-8 text-niyama-white" />
+          </div>
+          <div className="text-center">
+            <h3 className="text-lg font-bold text-niyama-black mb-2">Failed to load dashboard</h3>
+            <p className="text-niyama-gray-600 mb-4">
+              {isOffline ? 'You appear to be offline' : 'Unable to fetch dashboard data'}
+            </p>
+            <button 
+              onClick={handleRetry}
+              className="btn-primary flex items-center space-x-2"
+              disabled={isOffline}
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Retry</span>
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -83,36 +144,49 @@ export const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto px-6 py-8 space-y-8">
-      {/* Header Section */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
-        <div className="flex-1">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-niyama-black flex items-center justify-center shadow-brutal">
-              <BarChart3 className="w-6 h-6 text-niyama-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-niyama-black">
-                Dashboard
-              </h1>
-              <p className="text-body text-niyama-gray-600 mt-1">
-                Overview of your Policy as Code platform
-              </p>
+    <ErrorBoundary>
+      <div className="container mx-auto px-6 py-8 space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+          <div className="flex-1">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-niyama-black flex items-center justify-center shadow-brutal">
+                <BarChart3 className="w-6 h-6 text-niyama-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-niyama-black">
+                  Dashboard
+                </h1>
+                <p className="text-body text-niyama-gray-600 mt-1">
+                  Overview of your Policy as Code platform
+                </p>
+              </div>
             </div>
           </div>
+          
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={handleRetry}
+              className="btn-secondary btn-lg flex items-center justify-center"
+              disabled={metricsFetching || alertsFetching}
+            >
+              {metricsFetching || alertsFetching ? (
+                <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-5 h-5 mr-2" />
+              )}
+              Refresh
+            </button>
+            <button className="btn-secondary btn-lg flex items-center justify-center">
+              <Settings className="w-5 h-5 mr-2" />
+              Settings
+            </button>
+            <button className="btn-accent btn-lg flex items-center justify-center">
+              <Plus className="w-5 h-5 mr-2" />
+              New Policy
+            </button>
+          </div>
         </div>
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-              <button className="btn-secondary btn-lg flex items-center justify-center">
-                <Settings className="w-5 h-5 mr-2" />
-                Settings
-              </button>
-              <button className="btn-accent btn-lg flex items-center justify-center">
-                <Plus className="w-5 h-5 mr-2" />
-                New Policy
-              </button>
-        </div>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -299,7 +373,7 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 
