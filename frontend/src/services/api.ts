@@ -226,6 +226,37 @@ class ApiService {
     const response = await this.api.get('/health');
     return response.data;
   }
+
+  // User Management
+  async getUsers(): Promise<User[]> {
+    const response = await this.api.get<ApiResponse<User[]>>('/users');
+    return response.data.data!;
+  }
+
+  async getUser(id: string): Promise<User> {
+    const response = await this.api.get<ApiResponse<User>>(`/users/${id}`);
+    return response.data.data!;
+  }
+
+  async updateUser(id: string, data: Partial<User>): Promise<User> {
+    const response = await this.api.put<ApiResponse<User>>(`/users/${id}`, data);
+    return response.data.data!;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.api.delete(`/users/${id}`);
+  }
+
+  async createUser(data: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    organizationId: string;
+  }): Promise<User> {
+    const response = await this.api.post<ApiResponse<User>>('/users', data);
+    return response.data.data!;
+  }
 }
 
 export const api = new ApiService();

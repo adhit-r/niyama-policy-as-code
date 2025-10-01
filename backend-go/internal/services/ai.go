@@ -207,9 +207,7 @@ func (s *AIService) generateWithGemini(req PolicyGenerationRequest) (*PolicyGene
 	// Fallback to simple response format
 	return &PolicyGenerationResponse{
 		Policy:      responseText,
-		Description: req.Description,
-		Framework:   req.Framework,
-		Language:    req.Language,
+		Explanation: "AI-generated policy based on your requirements",
 		Source:      "gemini",
 		Confidence:  0.8, // Default confidence
 	}, nil
@@ -405,9 +403,9 @@ func (s *AIService) cacheResponse(key string, response *PolicyGenerationResponse
 	}
 
 	// Cache for 1 hour by default
-	ttl := time.Hour
+	var ttl time.Duration = time.Hour
 	if s.cfg.AI.CacheTTL > 0 {
-		ttl = s.cfg.AI.CacheTTL
+		ttl = time.Duration(s.cfg.AI.CacheTTL) * time.Second
 	}
 
 	if err := s.redis.Set(ctx, key, data, ttl).Err(); err != nil {

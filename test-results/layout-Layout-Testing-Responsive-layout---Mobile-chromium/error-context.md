@@ -1,0 +1,128 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - img [ref=e9]
+      - generic [ref=e11]:
+        - heading "niyama" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Policy as Code
+    - navigation [ref=e14]:
+      - button "Dashboard" [ref=e15] [cursor=pointer]:
+        - img [ref=e16] [cursor=pointer]
+        - generic [ref=e18] [cursor=pointer]: Dashboard
+      - button "Policies" [ref=e19] [cursor=pointer]:
+        - img [ref=e20] [cursor=pointer]
+        - generic [ref=e22] [cursor=pointer]: Policies
+      - button "Templates" [ref=e23] [cursor=pointer]:
+        - img [ref=e24] [cursor=pointer]
+        - generic [ref=e27] [cursor=pointer]: Templates
+      - button "Policy Editor" [ref=e28] [cursor=pointer]:
+        - img [ref=e29] [cursor=pointer]
+        - generic [ref=e32] [cursor=pointer]: Policy Editor
+      - button "Monitoring" [ref=e33] [cursor=pointer]:
+        - img [ref=e34] [cursor=pointer]
+        - generic [ref=e36] [cursor=pointer]: Monitoring
+      - button "Analytics" [ref=e37] [cursor=pointer]:
+        - img [ref=e38] [cursor=pointer]
+        - generic [ref=e41] [cursor=pointer]: Analytics
+      - button "Compliance" [ref=e42] [cursor=pointer]:
+        - img [ref=e43] [cursor=pointer]
+        - generic [ref=e45] [cursor=pointer]: Compliance
+      - button "Users" [ref=e46] [cursor=pointer]:
+        - img [ref=e47] [cursor=pointer]
+        - generic [ref=e52] [cursor=pointer]: Users
+      - button "Settings" [ref=e53] [cursor=pointer]:
+        - img [ref=e54] [cursor=pointer]
+        - generic [ref=e57] [cursor=pointer]: Settings
+    - generic [ref=e59]:
+      - img [ref=e61]
+      - generic [ref=e66]:
+        - paragraph [ref=e67]: Admin User
+        - paragraph [ref=e68]: admin@niyama.dev
+  - main [ref=e69]:
+    - generic [ref=e70]:
+      - generic [ref=e73]:
+        - generic [ref=e75]:
+          - img [ref=e77]
+          - generic [ref=e79]:
+            - heading "Dashboard" [level=1] [ref=e80]
+            - paragraph [ref=e81]: Policy as Code platform overview and metrics
+        - generic [ref=e82]:
+          - button "Refresh" [ref=e83] [cursor=pointer]:
+            - img
+            - text: Refresh
+          - button "New Policy" [ref=e88] [cursor=pointer]:
+            - img
+            - text: New Policy
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - img [ref=e96]
+                - generic [ref=e98]: "0"
+              - heading "Total Policies" [level=3] [ref=e99]
+              - paragraph [ref=e100]: Active policy rules
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - img [ref=e104]
+                - generic [ref=e107]: "0"
+              - heading "Compliant" [level=3] [ref=e108]
+              - paragraph [ref=e109]: Resources in compliance
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - img [ref=e113]
+                - generic [ref=e115]: "0"
+              - heading "Violations" [level=3] [ref=e116]
+              - paragraph [ref=e117]: Policy violations
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - img [ref=e121]
+                - generic [ref=e124]: 0%
+              - heading "Compliance Score" [level=3] [ref=e125]
+              - paragraph [ref=e126]: Overall compliance rate
+          - generic [ref=e127]:
+            - generic [ref=e129]:
+              - img [ref=e131]
+              - heading "Recent Alerts" [level=3] [ref=e133]
+            - generic [ref=e135]:
+              - img [ref=e137]
+              - paragraph [ref=e140]: No recent alerts
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - generic [ref=e144]:
+              - img [ref=e146]
+              - heading "System Status" [level=3] [ref=e150]
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - img [ref=e154]
+                - generic [ref=e157]:
+                  - paragraph [ref=e158]: API Gateway
+                  - paragraph [ref=e159]: HEALTHY
+              - generic [ref=e160]:
+                - img [ref=e162]
+                - generic [ref=e165]:
+                  - paragraph [ref=e166]: OPA Engine
+                  - paragraph [ref=e167]: HEALTHY
+              - generic [ref=e168]:
+                - img [ref=e170]
+                - generic [ref=e173]:
+                  - paragraph [ref=e174]: AI Service
+                  - paragraph [ref=e175]: HEALTHY
+          - generic [ref=e176]:
+            - generic [ref=e178]:
+              - img [ref=e180]
+              - heading "Quick Actions" [level=3] [ref=e182]
+            - generic [ref=e183]:
+              - button "Create Policy" [ref=e184] [cursor=pointer]:
+                - img [ref=e185] [cursor=pointer]
+                - text: Create Policy
+              - button "Manage Users" [ref=e188] [cursor=pointer]:
+                - img
+                - text: Manage Users
+              - button "Settings" [ref=e193] [cursor=pointer]:
+                - img
+                - text: Settings
+```

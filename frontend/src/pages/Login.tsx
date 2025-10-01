@@ -48,16 +48,16 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-niyama-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-primary-500 rounded-lg flex items-center justify-center">
-            <Lock className="h-6 w-6 text-white" />
+          <div className="mx-auto h-12 w-12 bg-niyama-black flex items-center justify-center shadow-brutal">
+            <Lock className="h-6 w-6 text-niyama-white" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-charcoal-800">
+          <h2 className="mt-6 text-3xl font-bold text-niyama-black text-display">
             Sign in to Niyama
           </h2>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-niyama-gray-600 text-body">
             Policy as Code Platform
           </p>
         </div>
@@ -70,7 +70,7 @@ export const Login: React.FC = () => {
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-slate-400" />
+                  <Mail className="h-5 w-5 text-niyama-gray-400" />
                 </div>
                 <input
                   id="email"
@@ -92,7 +92,7 @@ export const Login: React.FC = () => {
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-slate-400" />
+                  <Lock className="h-5 w-5 text-niyama-gray-400" />
                 </div>
                 <input
                   id="password"
@@ -111,9 +111,9 @@ export const Login: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-slate-400" />
+                    <EyeOff className="h-5 w-5 text-niyama-gray-400" />
                   ) : (
-                    <Eye className="h-5 w-5 text-slate-400" />
+                    <Eye className="h-5 w-5 text-niyama-gray-400" />
                   )}
                 </button>
               </div>
@@ -126,15 +126,15 @@ export const Login: React.FC = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-slate-300 rounded"
+                className="h-4 w-4 text-niyama-info focus:ring-niyama-accent border-niyama-gray-300"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-niyama-gray-600">
                 Remember me
               </label>
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
+              <a href="#" className="font-medium text-niyama-accent hover:text-niyama-accent-dark">
                 Forgot your password?
               </a>
             </div>
@@ -158,9 +158,9 @@ export const Login: React.FC = () => {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-niyama-gray-600">
               Don't have an account?{' '}
-              <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
+              <a href="#" className="font-medium text-niyama-accent hover:text-niyama-accent-dark">
                 Contact your administrator
               </a>
             </p>
@@ -170,6 +170,7 @@ export const Login: React.FC = () => {
     </div>
   );
 };
+
 
 
 

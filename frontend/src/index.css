@@ -88,7 +88,7 @@
   }
 
   .btn-secondary {
-    @apply btn bg-niyama-gray-200 text-niyama-black hover:bg-niyama-gray-300 active:bg-niyama-gray-400;
+    @apply btn bg-niyama-gray-200 text-niyama-black hover:bg-niyama-black hover:text-niyama-white active:bg-niyama-black;
   }
 
   .btn-success {
