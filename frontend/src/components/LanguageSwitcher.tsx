@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
+import { isRTL, getDirection } from '../utils/rtl';
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -9,6 +10,7 @@ const languages = [
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
   { code: 'ja', name: '日本語', flag: '🇯🇵' },
   { code: 'zh', name: '中文', flag: '🇨🇳' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
 ];
 
 export const LanguageSwitcher: React.FC = () => {
@@ -16,7 +18,33 @@ export const LanguageSwitcher: React.FC = () => {
 
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
+    
+    // Update document direction for RTL support
+    const direction = getDirection(languageCode);
+    document.documentElement.dir = direction;
+    document.documentElement.lang = languageCode;
+    
+    // Add/remove RTL class
+    if (isRTL(languageCode)) {
+      document.documentElement.classList.add('rtl');
+    } else {
+      document.documentElement.classList.remove('rtl');
+    }
   };
+
+  // Set initial direction on component mount
+  useEffect(() => {
+    const currentLanguage = i18n.language || 'en';
+    const direction = getDirection(currentLanguage);
+    document.documentElement.dir = direction;
+    document.documentElement.lang = currentLanguage;
+    
+    if (isRTL(currentLanguage)) {
+      document.documentElement.classList.add('rtl');
+    } else {
+      document.documentElement.classList.remove('rtl');
+    }
+  }, [i18n.language]);
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 

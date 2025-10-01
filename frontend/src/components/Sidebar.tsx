@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { isRTL, getRTLClasses } from '../utils/rtl';
 import { 
   BarChart3, 
   FileText, 
@@ -31,7 +32,10 @@ export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  const currentLanguage = i18n.language || 'en';
+  const isRTLMode = isRTL(currentLanguage);
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -49,7 +53,7 @@ export const Sidebar: React.FC = () => {
   });
 
   return (
-    <div className="w-64 bg-niyama-white border-r-2 border-niyama-black min-h-screen flex flex-col">
+    <div className={`w-64 bg-niyama-white border-r-2 border-niyama-black min-h-screen flex flex-col ${isRTLMode ? 'rtl' : ''}`}>
       {/* Logo/Brand Section */}
       <div className="p-6 border-b-2 border-niyama-black">
         <div className="flex items-center space-x-3">
