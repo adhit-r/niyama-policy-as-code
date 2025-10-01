@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 
@@ -15,6 +16,13 @@ import (
 )
 
 func main() {
+	// Parse command line flags
+	var (
+		migrate = flag.Bool("migrate", false, "Run database migrations")
+		seed    = flag.Bool("seed", false, "Seed database with initial data")
+	)
+	flag.Parse()
+
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using system environment variables")
@@ -23,12 +31,35 @@ func main() {
 	// Load configuration
 	cfg := config.Load()
 
-	// Initialize database connections (optional for development)
+	// Initialize database connections
 	db, err := database.Initialize(cfg)
 	if err != nil {
-		log.Printf("Warning: Database connection failed: %v", err)
+		log.Printf("❌ Database connection failed: %v", err)
+		if *migrate || *seed {
+			log.Fatal("Database connection required for migration/seeding")
+		}
 		log.Println("Running in development mode without database")
 		db = nil
+	}
+
+	// Handle migration command
+	if *migrate {
+		if db == nil {
+			log.Fatal("Database connection required for migration")
+		}
+		log.Println("✅ Database migrations completed")
+		return
+	}
+
+	// Handle seeding command
+	if *seed {
+		if db == nil {
+			log.Fatal("Database connection required for seeding")
+		}
+		if err := database.Seed(db.DB); err != nil {
+			log.Fatalf("❌ Database seeding failed: %v", err)
+		}
+		return
 	}
 
 	// Initialize services
