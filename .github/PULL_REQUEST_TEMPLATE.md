@@ -1,37 +1,29 @@
-## Description
-Brief description of the changes in this PR.
+# Pull Request
 
-## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Performance improvement
-- [ ] Code refactoring
-- [ ] Test improvements
+## 📝 Description
+<!-- Provide a clear and concise description of what this PR does -->
 
-## Related Issues
-Fixes #(issue number)
-Closes #(issue number)
-Related to #(issue number)
+## 🔗 Related Issue
+<!-- Link to the issue this PR addresses -->
+Fixes #(issue_number)
 
-## Changes Made
-- [ ] Change 1
-- [ ] Change 2
-- [ ] Change 3
-
-## Testing
+## 🧪 Testing
+<!-- Describe the tests you ran to verify your changes -->
 - [ ] Unit tests pass
 - [ ] Integration tests pass
-- [ ] Manual testing completed
-- [ ] All existing tests pass
+- [ ] E2E tests pass
+- [ ] Performance tests pass
+- [ ] Security scans pass
 
-## Screenshots (if applicable)
-Add screenshots to help explain your changes.
+## 📸 Screenshots (if applicable)
+<!-- Add screenshots to help explain your changes -->
 
-## Checklist
+## 🚀 Deployment Notes
+<!-- Any special deployment considerations -->
+
+## ✅ Checklist
 - [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my own code
+- [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
@@ -39,14 +31,8 @@ Add screenshots to help explain your changes.
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published
 
-## Additional Notes
-Any additional information that reviewers should know.
+## 🔍 Review Focus Areas
+<!-- Highlight specific areas you'd like reviewers to focus on -->
 
-## Breaking Changes
-If this PR contains breaking changes, please describe them here and suggest migration steps.
-
-## Performance Impact
-Describe any performance implications of these changes.
-
-## Security Considerations
-Describe any security implications of these changes.
+## 📋 Additional Notes
+<!-- Any additional information for reviewers -->

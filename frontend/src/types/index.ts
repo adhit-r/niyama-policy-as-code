@@ -14,11 +14,25 @@ export interface User {
 
 export enum UserRole {
   ADMIN = 'admin',
-  COMPLIANCE_OFFICER = 'compliance_officer',
-  DEVSECOPS_ENGINEER = 'devsecops_engineer',
-  PLATFORM_ENGINEER = 'platform_engineer',
-  VIEWER = 'viewer',
+  COMPLIANCE = 'compliance',
+  DEVELOPER = 'developer',
+  AUDITOR = 'auditor',
+  USER = 'user',
 }
+
+// Permission types for RBAC
+export type Permission = 
+  | 'policy:create'
+  | 'policy:read'
+  | 'policy:update'
+  | 'policy:delete'
+  | 'policy:execute'
+  | 'user:manage'
+  | 'org:manage'
+  | 'compliance:view'
+  | 'compliance:manage'
+  | 'audit:view'
+  | 'audit:manage';
 
 export interface AuthTokens {
   accessToken: string;
@@ -434,6 +448,8 @@ export interface FilterParams {
   dateFrom?: string;
   dateTo?: string;
 }
+
+
 
 
 

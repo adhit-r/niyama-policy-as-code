@@ -1,0 +1,331 @@
+<testsuites id="" name="" tests="10" failures="7" skipped="0" errors="0" time="29.35316">
+<testsuite name="layout.spec.ts" timestamp="2025-09-29T20:18:33.074Z" hostname="chromium" tests="10" failures="7" skipped="0" time="82.206" errors="0">
+<testcase name="Layout Testing › Header layout and navigation" classname="layout.spec.ts" time="12.238">
+<failure message="layout.spec.ts:9:7 Header layout and navigation" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:9:7 › Layout Testing › Header layout and navigation ──────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('header, [data-testid="header"]')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('header, [data-testid="header"]')
+
+
+       9 |   test('Header layout and navigation', async ({ page }) => {
+      10 |     // Check if header exists
+    > 11 |     await expect(page.locator('header, [data-testid="header"]')).toBeVisible();
+         |                                                                  ^
+      12 |     
+      13 |     // Check logo/brand
+      14 |     await expect(page.locator('[data-testid="logo"], .logo, h1')).toBeVisible();
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:11:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Header-layout-and-navigation-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Header-layout-and-navigation-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Header-layout-and-navigation-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Header-layout-and-navigation-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Header-layout-and-navigation-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Header-layout-and-navigation-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Sidebar layout and functionality" classname="layout.spec.ts" time="8.292">
+<failure message="layout.spec.ts:23:7 Sidebar layout and functionality" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:23:7 › Layout Testing › Sidebar layout and functionality ─────────────
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('text=Dashboard') resolved to 2 elements:
+        1) <span>Dashboard</span> aka getByRole('button', { name: 'Dashboard' })
+        2) <h1 class="text-3xl font-bold text-niyama-black text-display">Dashboard</h1> aka getByRole('heading', { name: 'Dashboard' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('text=Dashboard')
+
+
+      31 |     const navItems = ['Dashboard', 'Policies', 'Templates', 'Compliance', 'Monitoring', 'Users'];
+      32 |     for (const item of navItems) {
+    > 33 |       await expect(page.locator(`text=${item}`)).toBeVisible();
+         |                                                  ^
+      34 |     }
+      35 |     
+      36 |     // Test sidebar collapse/expand (if applicable)
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:33:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Sidebar-layout-and-functionality-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Sidebar-layout-and-functionality-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Sidebar-layout-and-functionality-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Sidebar-layout-and-functionality-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Sidebar-layout-and-functionality-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Sidebar-layout-and-functionality-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Main content area layout" classname="layout.spec.ts" time="8.405">
+</testcase>
+<testcase name="Layout Testing › Footer layout" classname="layout.spec.ts" time="7.708">
+</testcase>
+<testcase name="Layout Testing › Responsive layout - Mobile" classname="layout.spec.ts" time="12.412">
+<failure message="layout.spec.ts:76:7 Responsive layout - Mobile" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:76:7 › Layout Testing › Responsive layout - Mobile ───────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('header, [data-testid="header"]')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('header, [data-testid="header"]')
+
+
+      81 |     
+      82 |     // Check mobile header
+    > 83 |     await expect(page.locator('header, [data-testid="header"]')).toBeVisible();
+         |                                                                  ^
+      84 |     
+      85 |     // Check if sidebar is hidden or transformed for mobile
+      86 |     const sidebar = page.locator('[data-testid="sidebar"], .sidebar');
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:83:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Responsive-layout---Mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Responsive-layout---Mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Responsive-layout---Mobile-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Mobile-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Mobile-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Responsive layout - Tablet" classname="layout.spec.ts" time="7.33">
+<failure message="layout.spec.ts:104:7 Responsive layout - Tablet" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:104:7 › Layout Testing › Responsive layout - Tablet ──────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('header, [data-testid="header"]')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('header, [data-testid="header"]')
+
+
+      109 |     
+      110 |     // Check layout adapts to tablet size
+    > 111 |     await expect(page.locator('header, [data-testid="header"]')).toBeVisible();
+          |                                                                  ^
+      112 |     await expect(page.locator('main, [data-testid="main-content"]')).toBeVisible();
+      113 |   });
+      114 |
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:111:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Responsive-layout---Tablet-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Responsive-layout---Tablet-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Responsive-layout---Tablet-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Tablet-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Tablet-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Tablet-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Responsive layout - Desktop" classname="layout.spec.ts" time="6.792">
+<failure message="layout.spec.ts:115:7 Responsive layout - Desktop" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:115:7 › Layout Testing › Responsive layout - Desktop ─────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('header, [data-testid="header"]')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('header, [data-testid="header"]')
+
+
+      120 |     
+      121 |     // Check full desktop layout
+    > 122 |     await expect(page.locator('header, [data-testid="header"]')).toBeVisible();
+          |                                                                  ^
+      123 |     await expect(page.locator('[data-testid="sidebar"], .sidebar')).toBeVisible();
+      124 |     await expect(page.locator('main, [data-testid="main-content"]')).toBeVisible();
+      125 |   });
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:122:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Responsive-layout---Desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Responsive-layout---Desktop-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Responsive-layout---Desktop-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Desktop-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Desktop-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Responsive-layout---Desktop-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Navigation between pages maintains layout" classname="layout.spec.ts" time="7.201">
+<failure message="layout.spec.ts:127:7 Navigation between pages maintains layout" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:127:7 › Layout Testing › Navigation between pages maintains layout ───
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('header, [data-testid="header"]')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('header, [data-testid="header"]')
+
+
+      132 |       
+      133 |       // Check header is consistent
+    > 134 |       await expect(page.locator('header, [data-testid="header"]')).toBeVisible();
+          |                                                                    ^
+      135 |       
+      136 |       // Check sidebar is consistent
+      137 |       await expect(page.locator('[data-testid="sidebar"], .sidebar')).toBeVisible();
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:134:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Navi-c11a7-ween-pages-maintains-layout-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Navi-c11a7-ween-pages-maintains-layout-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Navi-c11a7-ween-pages-maintains-layout-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Navi-c11a7-ween-pages-maintains-layout-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Navi-c11a7-ween-pages-maintains-layout-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Navi-c11a7-ween-pages-maintains-layout-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Layout accessibility" classname="layout.spec.ts" time="6.79">
+<failure message="layout.spec.ts:144:7 Layout accessibility" type="FAILURE">
+<![CDATA[  [chromium] › layout.spec.ts:144:7 › Layout Testing › Layout accessibility ────────────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('h1')
+    Expected: 1
+    Received: 2
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('h1')
+        9 × locator resolved to 2 elements
+          - unexpected value "2"
+
+
+      147 |     // Check for proper heading hierarchy
+      148 |     const h1 = page.locator('h1');
+    > 149 |     await expect(h1).toHaveCount(1);
+          |                      ^
+      150 |     
+      151 |     // Check for proper navigation landmarks
+      152 |     await expect(page.locator('nav')).toBeVisible();
+        at /Users/adhi/axonome/Niyama/tests/e2e/layout.spec.ts:149:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Layout-accessibility-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/layout-Layout-Testing-Layout-accessibility-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/layout-Layout-Testing-Layout-accessibility-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|layout-Layout-Testing-Layout-accessibility-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|layout-Layout-Testing-Layout-accessibility-chromium/video.webm]]
+
+[[ATTACHMENT|layout-Layout-Testing-Layout-accessibility-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Layout Testing › Layout performance" classname="layout.spec.ts" time="5.038">
+</testcase>
+</testsuite>
+</testsuites>

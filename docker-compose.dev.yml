@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: niyama-postgres
+    environment:
+      POSTGRES_DB: niyama
+      POSTGRES_USER: niyama
+      POSTGRES_PASSWORD: niyama
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend-go/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - niyama-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U niyama -d niyama"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: niyama-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - niyama-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # InfluxDB for Metrics
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: niyama-influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: niyama
+      DOCKER_INFLUXDB_INIT_PASSWORD: niyama123
+      DOCKER_INFLUXDB_INIT_ORG: niyama
+      DOCKER_INFLUXDB_INIT_BUCKET: niyama-metrics
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: niyama-admin-token
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks:
+      - niyama-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Elasticsearch for Logging
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: niyama-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - niyama-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # OPA (Open Policy Agent)
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: niyama-opa
+    command: ["run", "--server", "--addr", "0.0.0.0:8181"]
+    ports:
+      - "8181:8181"
+    networks:
+      - niyama-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  influxdb_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+
+networks:
+  niyama-network:
+    driver: bridge

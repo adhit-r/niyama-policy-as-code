@@ -3,19 +3,19 @@ import { Settings as SettingsIcon, User, Shield, Bell, Database } from 'lucide-r
 
 export const Settings: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-display font-semibold text-charcoal-800">
+        <h1 className="text-3xl font-bold text-niyama-black mb-2 text-display">
           Settings
         </h1>
-        <p className="mt-2 text-body text-slate-600">
+        <p className="text-niyama-gray-600 text-body">
           Manage your account and organization settings
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
-          <nav className="space-y-1">
+          <nav className="space-y-2">
             {[
               { name: 'Profile', icon: User, current: true },
               { name: 'Security', icon: Shield },
@@ -27,10 +27,10 @@ export const Settings: React.FC = () => {
               return (
                 <button
                   key={item.name}
-                  className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                  className={`w-full flex items-center px-4 py-3 text-sm font-bold border-2 border-niyama-black transition-all duration-150 ${
                     item.current
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-niyama-accent text-niyama-black shadow-brutal'
+                      : 'bg-niyama-white text-niyama-gray-700 hover:bg-niyama-gray-100 hover:text-niyama-black'
                   }`}
                 >
                   <Icon className="h-5 w-5 mr-3" />
@@ -42,14 +42,14 @@ export const Settings: React.FC = () => {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">Profile Settings</h3>
-              <p className="card-description">
+          <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal">
+            <div className="bg-niyama-gray-100 border-b-2 border-niyama-black p-6">
+              <h3 className="text-xl font-bold text-niyama-black text-heading">Profile Settings</h3>
+              <p className="text-niyama-gray-600 text-body mt-1">
                 Update your personal information and preferences
               </p>
             </div>
-            <div className="card-content">
+            <div className="p-6">
               <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
@@ -98,6 +98,8 @@ export const Settings: React.FC = () => {
     </div>
   );
 };
+
+
 
 
 

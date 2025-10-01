@@ -3,83 +3,75 @@ import { Activity, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
 
 export const Monitoring: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-display font-semibold text-charcoal-800">
+        <h1 className="text-3xl font-bold text-niyama-black mb-2 text-display">
           Monitoring
         </h1>
-        <p className="mt-2 text-body text-slate-600">
+        <p className="text-niyama-gray-600 text-body">
           Real-time monitoring of policy enforcement and system health
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-primary-100">
-                <Activity className="h-6 w-6 text-primary-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">System Uptime</p>
-                <p className="text-2xl font-bold text-charcoal-800">99.9%</p>
-              </div>
+        <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-niyama-accent flex items-center justify-center shadow-brutal mr-4">
+              <Activity className="h-6 w-6 text-niyama-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-niyama-gray-600 uppercase tracking-wide">System Uptime</p>
+              <p className="text-2xl font-bold text-niyama-black">99.9%</p>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-success-100">
-                <CheckCircle className="h-6 w-6 text-success-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Policy Evaluations</p>
-                <p className="text-2xl font-bold text-charcoal-800">1.2M</p>
-              </div>
+        <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-niyama-success flex items-center justify-center shadow-brutal mr-4">
+              <CheckCircle className="h-6 w-6 text-niyama-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-niyama-gray-600 uppercase tracking-wide">Policy Evaluations</p>
+              <p className="text-2xl font-bold text-niyama-black">1.2M</p>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-warning-100">
-                <AlertTriangle className="h-6 w-6 text-warning-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Active Alerts</p>
-                <p className="text-2xl font-bold text-charcoal-800">7</p>
-              </div>
+        <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-niyama-warning flex items-center justify-center shadow-brutal mr-4">
+              <AlertTriangle className="h-6 w-6 text-niyama-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-niyama-gray-600 uppercase tracking-wide">Active Alerts</p>
+              <p className="text-2xl font-bold text-niyama-black">7</p>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-enforcement-100">
-                <TrendingUp className="h-6 w-6 text-enforcement-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Response Time</p>
-                <p className="text-2xl font-bold text-charcoal-800">45ms</p>
-              </div>
+        <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-niyama-info flex items-center justify-center shadow-brutal mr-4">
+              <TrendingUp className="h-6 w-6 text-niyama-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-niyama-gray-600 uppercase tracking-wide">Response Time</p>
+              <p className="text-2xl font-bold text-niyama-black">45ms</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">System Health</h3>
-            <p className="card-description">
+        <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal">
+          <div className="bg-niyama-gray-100 border-b-2 border-niyama-black p-6">
+            <h3 className="text-xl font-bold text-niyama-black text-heading">System Health</h3>
+            <p className="text-niyama-gray-600 text-body mt-1">
               Current status of all system components
             </p>
           </div>
-          <div className="card-content">
+          <div className="p-6">
             <div className="space-y-4">
               {[
                 { name: 'API Server', status: 'healthy', uptime: '99.9%' },
@@ -88,32 +80,26 @@ export const Monitoring: React.FC = () => {
                 { name: 'AI Service', status: 'degraded', uptime: '98.5%' },
                 { name: 'Monitoring', status: 'healthy', uptime: '99.9%' },
               ].map((service) => (
-                <div key={service.name} className="flex items-center justify-between">
+                <div key={service.name} className="flex items-center justify-between p-4 border-2 border-niyama-black bg-niyama-gray-100">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-full ${
-                      service.status === 'healthy' ? 'bg-success-100' :
-                      service.status === 'degraded' ? 'bg-warning-100' :
-                      'bg-danger-100'
-                    }`}>
-                      <div className={`h-2 w-2 rounded-full ${
-                        service.status === 'healthy' ? 'bg-success-500' :
-                        service.status === 'degraded' ? 'bg-warning-500' :
-                        'bg-danger-500'
-                      }`} />
-                    </div>
+                    <div className={`w-4 h-4 border-2 border-niyama-black ${
+                      service.status === 'healthy' ? 'bg-niyama-success' :
+                      service.status === 'degraded' ? 'bg-niyama-warning' :
+                      'bg-niyama-error'
+                    }`} />
                     <div>
-                      <p className="text-sm font-medium text-charcoal-800">
+                      <p className="text-sm font-bold text-niyama-black uppercase tracking-wide">
                         {service.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-niyama-gray-600 font-mono">
                         Uptime: {service.uptime}
                       </p>
                     </div>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    service.status === 'healthy' ? 'bg-success-100 text-success-800' :
-                    service.status === 'degraded' ? 'bg-warning-100 text-warning-800' :
-                    'bg-danger-100 text-danger-800'
+                  <span className={`text-xs px-3 py-1 border-2 border-niyama-black font-bold uppercase tracking-wide ${
+                    service.status === 'healthy' ? 'bg-niyama-success text-niyama-white' :
+                    service.status === 'degraded' ? 'bg-niyama-warning text-niyama-white' :
+                    'bg-niyama-error text-niyama-white'
                   }`}>
                     {service.status}
                   </span>
@@ -123,14 +109,14 @@ export const Monitoring: React.FC = () => {
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Recent Alerts</h3>
-            <p className="card-description">
+        <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal">
+          <div className="bg-niyama-gray-100 border-b-2 border-niyama-black p-6">
+            <h3 className="text-xl font-bold text-niyama-black text-heading">Recent Alerts</h3>
+            <p className="text-niyama-gray-600 text-body mt-1">
               Latest system alerts and notifications
             </p>
           </div>
-          <div className="card-content">
+          <div className="p-6">
             <div className="space-y-4">
               {[
                 {
@@ -158,29 +144,24 @@ export const Monitoring: React.FC = () => {
                   time: '2 hours ago',
                 },
               ].map((alert, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className={`p-2 rounded-full ${
-                    alert.severity === 'critical' ? 'bg-danger-100' :
-                    alert.severity === 'high' ? 'bg-danger-100' :
-                    alert.severity === 'medium' ? 'bg-warning-100' :
-                    'bg-success-100'
+                <div key={index} className="flex items-start space-x-3 p-4 border-2 border-niyama-black bg-niyama-gray-100">
+                  <div className={`w-8 h-8 border-2 border-niyama-black flex items-center justify-center ${
+                    alert.severity === 'critical' ? 'bg-niyama-error' :
+                    alert.severity === 'high' ? 'bg-niyama-error' :
+                    alert.severity === 'medium' ? 'bg-niyama-warning' :
+                    'bg-niyama-success'
                   }`}>
-                    <AlertTriangle className={`h-4 w-4 ${
-                      alert.severity === 'critical' ? 'text-danger-600' :
-                      alert.severity === 'high' ? 'text-danger-600' :
-                      alert.severity === 'medium' ? 'text-warning-600' :
-                      'text-success-600'
-                    }`} />
+                    <AlertTriangle className={`h-4 w-4 text-niyama-white`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-charcoal-800">
+                    <p className="text-sm font-bold text-niyama-black uppercase tracking-wide">
                       {alert.title}
                     </p>
                     <div className="mt-1 flex items-center space-x-2">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-niyama-gray-600 font-mono uppercase tracking-wide">
                         {alert.type}
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-niyama-gray-600 font-mono">
                         {alert.time}
                       </span>
                     </div>
@@ -194,6 +175,8 @@ export const Monitoring: React.FC = () => {
     </div>
   );
 };
+
+
 
 
 

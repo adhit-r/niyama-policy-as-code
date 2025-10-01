@@ -5,10 +5,10 @@ export const Compliance: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-display font-semibold text-charcoal-800">
+        <h1 className="text-display font-semibold text-niyama-black">
           Compliance
         </h1>
-        <p className="mt-2 text-body text-slate-600">
+        <p className="mt-2 text-body text-niyama-gray-600">
           Monitor and manage compliance across multiple frameworks
         </p>
       </div>
@@ -17,12 +17,12 @@ export const Compliance: React.FC = () => {
         <div className="card">
           <div className="card-content">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-success-100">
-                <CheckSquare className="h-6 w-6 text-success-600" />
+              <div className="p-3 bg-niyama-accent-light border-2 border-niyama-black">
+                <CheckSquare className="h-6 w-6 text-niyama-accent" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">SOC 2 Score</p>
-                <p className="text-2xl font-bold text-charcoal-800">92%</p>
+                <p className="text-sm font-medium text-niyama-gray-600">SOC 2 Score</p>
+                <p className="text-2xl font-bold text-niyama-black">92%</p>
               </div>
             </div>
           </div>
@@ -31,12 +31,12 @@ export const Compliance: React.FC = () => {
         <div className="card">
           <div className="card-content">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-primary-100">
-                <FileText className="h-6 w-6 text-primary-600" />
+              <div className="p-3 bg-niyama-info-light border-2 border-niyama-black">
+                <FileText className="h-6 w-6 text-niyama-info" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">ISO 27001</p>
-                <p className="text-2xl font-bold text-charcoal-800">87%</p>
+                <p className="text-sm font-medium text-niyama-gray-600">ISO 27001</p>
+                <p className="text-2xl font-bold text-niyama-black">87%</p>
               </div>
             </div>
           </div>
@@ -45,12 +45,12 @@ export const Compliance: React.FC = () => {
         <div className="card">
           <div className="card-content">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-warning-100">
-                <TrendingUp className="h-6 w-6 text-warning-600" />
+              <div className="p-3 bg-niyama-warning-light border-2 border-niyama-black">
+                <TrendingUp className="h-6 w-6 text-niyama-warning" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">HIPAA</p>
-                <p className="text-2xl font-bold text-charcoal-800">78%</p>
+                <p className="text-sm font-medium text-niyama-gray-600">HIPAA</p>
+                <p className="text-2xl font-bold text-niyama-black">78%</p>
               </div>
             </div>
           </div>
@@ -58,12 +58,12 @@ export const Compliance: React.FC = () => {
 
         <div className="card">
           <div className="card-content">
-            <div className="p-3 rounded-lg bg-danger-100">
-              <AlertTriangle className="h-6 w-6 text-danger-600" />
+            <div className="p-3 bg-niyama-error-light border-2 border-niyama-black">
+              <AlertTriangle className="h-6 w-6 text-niyama-error" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">GDPR</p>
-              <p className="text-2xl font-bold text-charcoal-800">65%</p>
+              <p className="text-sm font-medium text-niyama-gray-600">GDPR</p>
+              <p className="text-2xl font-bold text-niyama-black">65%</p>
             </div>
           </div>
         </div>
@@ -88,28 +88,28 @@ export const Compliance: React.FC = () => {
               ].map((framework) => (
                 <div key={framework.name} className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-charcoal-800">
+                    <p className="text-sm font-medium text-niyama-black">
                       {framework.name}
                     </p>
-                    <div className="mt-1 w-full bg-slate-200 rounded-full h-2">
+                    <div className="mt-1 w-full bg-niyama-gray-200 border-2 border-niyama-black h-2">
                       <div
-                        className={`h-2 rounded-full ${
-                          framework.status === 'compliant' ? 'bg-success-500' :
-                          framework.status === 'partial' ? 'bg-warning-500' :
-                          'bg-danger-500'
+                        className={`h-2 ${
+                          framework.status === 'compliant' ? 'bg-niyama-accent' :
+                          framework.status === 'partial' ? 'bg-niyama-warning' :
+                          'bg-niyama-error'
                         }`}
                         style={{ width: `${framework.score}%` }}
                       />
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-charcoal-800">
+                    <p className="text-sm font-bold text-niyama-black">
                       {framework.score}%
                     </p>
                     <p className={`text-xs ${
-                      framework.status === 'compliant' ? 'text-success-600' :
-                      framework.status === 'partial' ? 'text-warning-600' :
-                      'text-danger-600'
+                      framework.status === 'compliant' ? 'text-niyama-success' :
+                      framework.status === 'partial' ? 'text-niyama-warning' :
+                      'text-niyama-error'
                     }`}>
                       {framework.status}
                     </p>
@@ -150,31 +150,31 @@ export const Compliance: React.FC = () => {
                 },
               ].map((finding, index) => (
                 <div key={index} className="flex items-start space-x-3">
-                  <div className={`p-2 rounded-full ${
-                    finding.severity === 'critical' ? 'bg-danger-100' :
-                    finding.severity === 'high' ? 'bg-danger-100' :
-                    finding.severity === 'medium' ? 'bg-warning-100' :
-                    'bg-success-100'
+                  <div className={`p-2 border-2 border-niyama-black ${
+                    finding.severity === 'critical' ? 'bg-niyama-error-light' :
+                    finding.severity === 'high' ? 'bg-niyama-error-light' :
+                    finding.severity === 'medium' ? 'bg-niyama-warning-light' :
+                    'bg-niyama-accent-light'
                   }`}>
                     <AlertTriangle className={`h-4 w-4 ${
-                      finding.severity === 'critical' ? 'text-danger-600' :
-                      finding.severity === 'high' ? 'text-danger-600' :
-                      finding.severity === 'medium' ? 'text-warning-600' :
-                      'text-success-600'
+                      finding.severity === 'critical' ? 'text-niyama-error' :
+                      finding.severity === 'high' ? 'text-niyama-error' :
+                      finding.severity === 'medium' ? 'text-niyama-warning' :
+                      'text-niyama-success'
                     }`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-charcoal-800">
+                    <p className="text-sm font-medium text-niyama-black">
                       {finding.title}
                     </p>
                     <div className="mt-1 flex items-center space-x-2">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-niyama-gray-500">
                         {finding.framework}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        finding.status === 'open' ? 'bg-danger-100 text-danger-800' :
-                        finding.status === 'acknowledged' ? 'bg-warning-100 text-warning-800' :
-                        'bg-success-100 text-success-800'
+                      <span className={`text-xs px-2 py-1 border-2 border-niyama-black ${
+                        finding.status === 'open' ? 'bg-niyama-error-light text-niyama-error' :
+                        finding.status === 'acknowledged' ? 'bg-niyama-warning-light text-niyama-warning' :
+                        'bg-niyama-accent-light text-niyama-accent'
                       }`}>
                         {finding.status}
                       </span>
@@ -189,6 +189,8 @@ export const Compliance: React.FC = () => {
     </div>
   );
 };
+
+
 
 
 

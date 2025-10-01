@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { api } from '../services/api';
+import { useTranslation } from '../hooks/useTranslation';
 import { 
   Shield, 
   AlertTriangle, 
@@ -22,6 +23,8 @@ import { ErrorBoundary } from '../components/ui/ErrorBoundary';
 import { Toast } from '../components/ui/Toast';
 
 export const Dashboard: React.FC = () => {
+  const { t } = useTranslation();
+  
   const { 
     data: metrics, 
     isLoading: metricsLoading, 
@@ -51,7 +54,7 @@ export const Dashboard: React.FC = () => {
     'dashboard-alerts',
     () => api.getAlerts({ limit: 5 }),
     {
-      refetchInterval: 60000, // Refresh every minute
+      refetchInterval: 30000,
       retry: 3,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       onError: (error) => {
@@ -60,314 +63,249 @@ export const Dashboard: React.FC = () => {
     }
   );
 
-  const handleRetry = () => {
+  const handleRefresh = () => {
     refetchMetrics();
     refetchAlerts();
   };
 
-  const isOffline = !navigator.onLine;
-
   if (metricsLoading || alertsLoading) {
     return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex flex-col items-center justify-center h-64 space-y-4">
-          <LoadingSpinner size="lg" />
-          <p className="text-niyama-gray-600">Loading dashboard data...</p>
-        </div>
+      <div className="min-h-screen bg-niyama-gray-100 flex items-center justify-center">
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   if (metricsError || alertsError) {
     return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex flex-col items-center justify-center h-64 space-y-4">
-          <div className="w-16 h-16 bg-niyama-error flex items-center justify-center shadow-brutal">
-            <AlertTriangle className="w-8 h-8 text-niyama-white" />
-          </div>
-          <div className="text-center">
-            <h3 className="text-lg font-bold text-niyama-black mb-2">Failed to load dashboard</h3>
-            <p className="text-niyama-gray-600 mb-4">
-              {isOffline ? 'You appear to be offline' : 'Unable to fetch dashboard data'}
-            </p>
-            <button 
-              onClick={handleRetry}
-              className="btn-primary flex items-center space-x-2"
-              disabled={isOffline}
-            >
-              <RefreshCw className="w-4 h-4" />
-              <span>Retry</span>
-            </button>
-          </div>
+      <div className="min-h-screen bg-niyama-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <AlertTriangle className="w-16 h-16 text-niyama-error mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-niyama-black mb-2">Error Loading Dashboard</h2>
+          <p className="text-niyama-gray-600 mb-4">
+            {metricsError?.message || alertsError?.message || 'Failed to load dashboard data'}
+          </p>
+          <button 
+            onClick={handleRefresh}
+            className="btn-accent"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
-  const stats = [
-    {
-      name: 'Active Policies',
-      value: metrics?.activePolicies || 0,
-      change: '+12%',
-      changeType: 'positive' as const,
-      icon: Shield,
-      color: 'text-niyama-white',
-      bgColor: 'bg-niyama-accent',
-    },
-    {
-      name: 'Policy Violations',
-      value: metrics?.violations || 0,
-      change: '-8%',
-      changeType: 'negative' as const,
-      icon: AlertTriangle,
-      color: 'text-niyama-white',
-      bgColor: 'bg-niyama-accent',
-    },
-    {
-      name: 'Compliance Score',
-      value: `${metrics?.complianceScore || 0}%`,
-      change: '+5%',
-      changeType: 'positive' as const,
-      icon: CheckCircle,
-      color: 'text-niyama-white',
-      bgColor: 'bg-niyama-accent',
-    },
-    {
-      name: 'Evaluations Today',
-      value: metrics?.evaluationsToday || 0,
-      change: '+23%',
-      changeType: 'positive' as const,
-      icon: Activity,
-      color: 'text-niyama-white',
-      bgColor: 'bg-niyama-accent',
-    },
-  ];
-
   return (
     <ErrorBoundary>
-      <div className="container mx-auto px-6 py-8 space-y-8">
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
-          <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-niyama-black flex items-center justify-center shadow-brutal">
-                <BarChart3 className="w-6 h-6 text-niyama-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-niyama-black">
-                  Dashboard
-                </h1>
-                <p className="text-body text-niyama-gray-600 mt-1">
-                  Overview of your Policy as Code platform
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button 
-              onClick={handleRetry}
-              className="btn-secondary btn-lg flex items-center justify-center"
-              disabled={metricsFetching || alertsFetching}
-            >
-              {metricsFetching || alertsFetching ? (
-                <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
-              ) : (
-                <RefreshCw className="w-5 h-5 mr-2" />
-              )}
-              Refresh
-            </button>
-            <button className="btn-secondary btn-lg flex items-center justify-center">
-              <Settings className="w-5 h-5 mr-2" />
-              Settings
-            </button>
-            <button className="btn-accent btn-lg flex items-center justify-center">
-              <Plus className="w-5 h-5 mr-2" />
-              New Policy
-            </button>
-          </div>
-        </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.name} className="metric-card" style={{backgroundColor: '#ffffff'}}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 ${stat.bgColor} flex items-center justify-center shadow-brutal`}>
-                    <Icon className={`h-6 w-6 ${stat.color}`} />
+      <div className="min-h-screen bg-niyama-gray-100">
+        {/* Header */}
+        <div className="bg-niyama-white border-b-2 border-niyama-black shadow-brutal">
+          <div className="container mx-auto px-6 py-8">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+              <div className="flex-1">
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-16 h-16 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                    <BarChart3 className="w-8 h-8 text-niyama-black" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-niyama-gray-600 uppercase tracking-wide">{stat.name}</p>
-                    <p className="text-2xl font-bold text-niyama-black">{stat.value}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t-2 border-niyama-black">
-                <div className="flex items-center">
-                  <TrendingUp className={`h-4 w-4 ${
-                    stat.changeType === 'positive' ? 'text-niyama-success' : 'text-niyama-error'
-                  }`} />
-                  <span className={`ml-2 text-sm font-bold ${
-                    stat.changeType === 'positive' ? 'text-niyama-success' : 'text-niyama-error'
-                  }`}>
-                    {stat.change}
-                  </span>
-                  <span className="ml-2 text-sm text-niyama-gray-600">from last month</span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Recent Alerts */}
-        <div className="card">
-          <div className="card-header">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-niyama-error flex items-center justify-center shadow-brutal">
-                <AlertTriangle className="w-4 h-4 text-niyama-white" />
-              </div>
-              <div>
-                <h3 className="card-title">Recent Alerts</h3>
-                <p className="card-description">
-                  Latest policy violations and system alerts
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="card-content">
-            <div className="space-y-4">
-              {alerts?.data?.map((alert: any) => (
-                <div key={alert.id} className="flex items-start space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
-                  <div className={`w-8 h-8 flex items-center justify-center shadow-brutal ${
-                    alert.severity === 'critical' ? 'bg-niyama-error' :
-                    alert.severity === 'high' ? 'bg-niyama-error' :
-                    alert.severity === 'medium' ? 'bg-niyama-warning' :
-                    'bg-niyama-success'
-                  }`}>
-                    <AlertTriangle className="h-4 w-4 text-niyama-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-niyama-black">
-                      {alert.title}
-                    </p>
-                    <p className="text-sm text-niyama-gray-700 truncate">
-                      {alert.message}
-                    </p>
-                    <p className="text-xs text-niyama-gray-600 mt-1 font-mono">
-                      {new Date(alert.createdAt).toLocaleString()}
+                    <h1 className="text-3xl font-bold text-niyama-black text-display">
+                      Dashboard
+                    </h1>
+                    <p className="text-body text-niyama-gray-600 mt-1">
+                      Policy as Code platform overview and metrics
                     </p>
                   </div>
                 </div>
-              )) || (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-niyama-success border-2 border-niyama-black rounded mx-auto mb-4 flex items-center justify-center">
-                    <CheckCircle className="w-8 h-8 text-niyama-white" />
-                  </div>
-                  <h3 className="text-heading-2 font-bold text-niyama-black mb-2">No alerts</h3>
-                  <p className="text-niyama-gray-600">
-                    All systems are running smoothly
-                  </p>
-                </div>
-              )}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button 
+                  onClick={handleRefresh}
+                  disabled={metricsFetching || alertsFetching}
+                  className="btn-secondary btn-lg flex items-center justify-center"
+                >
+                  <RefreshCw className={`w-5 h-5 mr-2 ${(metricsFetching || alertsFetching) ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
+                <button className="btn-accent btn-lg flex items-center justify-center">
+                  <Plus className="w-5 h-5 mr-2" />
+                  New Policy
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="card">
-          <div className="card-header">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
-                <Zap className="w-4 h-4 text-niyama-black" />
-              </div>
-              <div>
-                <h3 className="card-title">Quick Actions</h3>
-                <p className="card-description">
-                  Common tasks and shortcuts
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="card-content">
-            <div className="grid grid-cols-2 gap-4">
-              <button className="flex flex-col items-center p-6 border-2 border-niyama-black bg-niyama-white hover:bg-niyama-accent hover:text-niyama-black transition-colors shadow-brutal-sm">
-                <FileText className="h-8 w-8 mb-3 text-niyama-black" />
-                <span className="text-sm font-bold text-niyama-black">Create Policy</span>
-              </button>
-              <button className="flex flex-col items-center p-6 border-2 border-niyama-black bg-niyama-white hover:bg-niyama-success hover:text-niyama-white transition-colors shadow-brutal-sm">
-                <Shield className="h-8 w-8 mb-3 text-niyama-black" />
-                <span className="text-sm font-bold text-niyama-black">View Templates</span>
-              </button>
-              <button className="flex flex-col items-center p-6 border-2 border-niyama-black bg-niyama-white hover:bg-niyama-info hover:text-niyama-white transition-colors shadow-brutal-sm">
-                <Zap className="h-8 w-8 mb-3 text-niyama-black" />
-                <span className="text-sm font-bold text-niyama-black">AI Assistant</span>
-              </button>
-              <button className="flex flex-col items-center p-6 border-2 border-niyama-black bg-niyama-white hover:bg-niyama-warning hover:text-niyama-black transition-colors shadow-brutal-sm">
-                <Users className="h-8 w-8 mb-3 text-niyama-black" />
-                <span className="text-sm font-bold text-niyama-black">Team Settings</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Main Content */}
+        <div className="container mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Metrics Cards */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <Shield className="w-6 h-6 text-niyama-black" />
+                    </div>
+                    <span className="text-2xl font-bold text-niyama-black">
+                      {metrics?.totalPolicies || 0}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-niyama-black mb-1">Total Policies</h3>
+                  <p className="text-niyama-gray-600">Active policy rules</p>
+                </div>
 
-      {/* System Health */}
-      <div className="card">
-        <div className="card-header">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-niyama-success flex items-center justify-center shadow-brutal">
-              <Activity className="w-4 h-4 text-niyama-white" />
+                <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <CheckCircle className="w-6 h-6 text-niyama-black" />
+                    </div>
+                    <span className="text-2xl font-bold text-niyama-black">
+                      {metrics?.compliantResources || 0}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-niyama-black mb-1">Compliant</h3>
+                  <p className="text-niyama-gray-600">Resources in compliance</p>
+                </div>
+
+                <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <AlertTriangle className="w-6 h-6 text-niyama-black" />
+                    </div>
+                    <span className="text-2xl font-bold text-niyama-black">
+                      {metrics?.violations || 0}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-niyama-black mb-1">Violations</h3>
+                  <p className="text-niyama-gray-600">Policy violations</p>
+                </div>
+
+                <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <TrendingUp className="w-6 h-6 text-niyama-black" />
+                    </div>
+                    <span className="text-2xl font-bold text-niyama-black">
+                      {metrics?.complianceScore || 0}%
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-niyama-black mb-1">Compliance Score</h3>
+                  <p className="text-niyama-gray-600">Overall compliance rate</p>
+                </div>
+              </div>
+
+              {/* Recent Alerts */}
+              <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal">
+                <div className="bg-niyama-black border-b-2 border-niyama-black p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <Activity className="w-4 h-4 text-niyama-black" />
+                    </div>
+                    <h3 className="text-lg font-bold text-niyama-white">Recent Alerts</h3>
+                  </div>
+                </div>
+                <div className="p-6">
+                  {alerts && alerts.length > 0 ? (
+                    <div className="space-y-4">
+                      {alerts.map((alert: any, index: number) => (
+                        <div key={index} className="flex items-center space-x-4 p-4 border-2 border-niyama-black bg-niyama-gray-100">
+                          <div className={`w-3 h-3 rounded-full ${
+                            alert.severity === 'high' ? 'bg-niyama-error' :
+                            alert.severity === 'medium' ? 'bg-niyama-warning' :
+                            'bg-niyama-accent'
+                          }`} />
+                          <div className="flex-1">
+                            <p className="font-bold text-niyama-black">{alert.title}</p>
+                            <p className="text-sm text-niyama-gray-600">{alert.description}</p>
+                          </div>
+                          <span className="text-xs text-niyama-gray-500">
+                            {new Date(alert.timestamp).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-12 h-12 bg-niyama-gray-200 border-2 border-niyama-black mx-auto mb-4 flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-niyama-black" />
+                      </div>
+                      <p className="text-niyama-gray-600 font-medium">No recent alerts</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 className="card-title">System Health</h3>
-              <p className="card-description">
-                Current status of all system components
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="card-content">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
-              <div className="w-10 h-10 bg-niyama-success flex items-center justify-center shadow-brutal">
-                <CheckCircle className="h-5 w-5 text-niyama-white" />
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* System Status */}
+              <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal">
+                <div className="bg-niyama-black border-b-2 border-niyama-black p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <Wifi className="w-4 h-4 text-niyama-black" />
+                    </div>
+                    <h3 className="text-lg font-bold text-niyama-white">System Status</h3>
+                  </div>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
+                    <div className="w-10 h-10 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <CheckCircle className="h-5 w-5 text-niyama-black" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-niyama-black">API Gateway</p>
+                      <p className="text-xs text-niyama-accent font-mono">HEALTHY</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
+                    <div className="w-10 h-10 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <CheckCircle className="h-5 w-5 text-niyama-black" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-niyama-black">OPA Engine</p>
+                      <p className="text-xs text-niyama-accent font-mono">HEALTHY</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
+                    <div className="w-10 h-10 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <CheckCircle className="h-5 w-5 text-niyama-black" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-niyama-black">AI Service</p>
+                      <p className="text-xs text-niyama-accent font-mono">HEALTHY</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-bold text-niyama-black">API Server</p>
-                <p className="text-xs text-niyama-success font-mono">HEALTHY</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
-              <div className="w-10 h-10 bg-niyama-success flex items-center justify-center shadow-brutal">
-                <CheckCircle className="h-5 w-5 text-niyama-white" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-niyama-black">Database</p>
-                <p className="text-xs text-niyama-success font-mono">HEALTHY</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
-              <div className="w-10 h-10 bg-niyama-success flex items-center justify-center shadow-brutal">
-                <CheckCircle className="h-5 w-5 text-niyama-white" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-niyama-black">OPA Engine</p>
-                <p className="text-xs text-niyama-success font-mono">HEALTHY</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 p-4 border-2 border-niyama-black bg-niyama-white">
-              <div className="w-10 h-10 bg-niyama-success flex items-center justify-center shadow-brutal">
-                <CheckCircle className="h-5 w-5 text-niyama-white" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-niyama-black">AI Service</p>
-                <p className="text-xs text-niyama-success font-mono">HEALTHY</p>
+
+              {/* Quick Actions */}
+              <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal">
+                <div className="bg-niyama-black border-b-2 border-niyama-black p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                      <Zap className="w-4 h-4 text-niyama-black" />
+                    </div>
+                    <h3 className="text-lg font-bold text-niyama-white">Quick Actions</h3>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <button className="btn-accent w-full justify-center">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Create Policy
+                  </button>
+                  <button className="btn-secondary w-full justify-center">
+                    <Users className="w-4 h-4 mr-2" />
+                    Manage Users
+                  </button>
+                  <button className="btn-secondary w-full justify-center">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -376,5 +314,3 @@ export const Dashboard: React.FC = () => {
     </ErrorBoundary>
   );
 };
-
-

@@ -21,6 +21,68 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  /* RTL Support */
+  html[dir="rtl"] {
+    direction: rtl;
+  }
+
+  html[dir="rtl"] body {
+    text-align: right;
+  }
+
+  /* RTL-specific adjustments */
+  .rtl {
+    direction: rtl;
+  }
+
+  .rtl .flex {
+    flex-direction: row-reverse;
+  }
+
+  .rtl .space-x-2 > * + * {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+
+  .rtl .space-x-3 > * + * {
+    margin-left: 0;
+    margin-right: 0.75rem;
+  }
+
+  .rtl .space-x-4 > * + * {
+    margin-left: 0;
+    margin-right: 1rem;
+  }
+
+  .rtl .pl-4 {
+    padding-left: 0;
+    padding-right: 1rem;
+  }
+
+  .rtl .pr-4 {
+    padding-right: 0;
+    padding-left: 1rem;
+  }
+
+  .rtl .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .rtl .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  /* RTL text alignment */
+  .rtl .text-left {
+    text-align: right;
+  }
+
+  .rtl .text-right {
+    text-align: left;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply text-niyama-black font-bold;
   }
@@ -88,7 +150,7 @@
   }
 
   .btn-secondary {
-    @apply btn bg-niyama-gray-200 text-niyama-black hover:bg-niyama-gray-300 active:bg-niyama-gray-400;
+    @apply btn bg-niyama-gray-200 text-niyama-black hover:bg-niyama-black hover:text-niyama-white active:bg-niyama-black;
   }
 
   .btn-success {

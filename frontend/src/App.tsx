@@ -10,7 +10,9 @@ import { PolicyEditor } from './pages/PolicyEditor';
 import { Templates } from './pages/Templates';
 import { Compliance } from './pages/Compliance';
 import { Monitoring } from './pages/Monitoring';
+import { UserManagement } from './pages/UserManagement';
 import { Settings } from './pages/Settings';
+import { Analytics } from './pages/Analytics';
 import { NotFound } from './pages/NotFound';
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
                     <Route path="templates" element={<Templates />} />
                     <Route path="compliance" element={<Compliance />} />
                     <Route path="monitoring" element={<Monitoring />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="users" element={<UserManagement />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>

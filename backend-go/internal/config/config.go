@@ -46,6 +46,7 @@ type OPAConfig struct {
 type AIConfig struct {
 	GeminiAPIKey string
 	Model        string
+	CacheTTL     int // Cache TTL in seconds
 }
 
 type MonitoringConfig struct {
@@ -82,6 +83,7 @@ func Load() *Config {
 		AI: AIConfig{
 			GeminiAPIKey: getEnv("GEMINI_API_KEY", ""),
 			Model:        getEnv("GEMINI_MODEL", "gemini-1.5-pro"),
+			CacheTTL:     getIntEnv("AI_CACHE_TTL", 3600), // 1 hour default
 		},
 		Monitoring: MonitoringConfig{
 			InfluxDBURL:      getEnv("INFLUXDB_URL", "http://localhost:8086"),

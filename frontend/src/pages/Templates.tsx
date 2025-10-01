@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Star, Tag, FileText, Code, Shield, Zap, Search, Filter, Plus } from 'lucide-react';
+import { Download, Star, Tag, FileText, Code, Shield, Zap, Search, Filter, Plus, Eye, Copy, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Template {
@@ -17,6 +17,7 @@ export const Templates: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFramework, setSelectedFramework] = useState('all');
   const [selectedLanguage, setSelectedLanguage] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const navigate = useNavigate();
 
   const frameworks = ['all', 'Kubernetes', 'Docker', 'AWS', 'Azure', 'GCP', 'Terraform'];
@@ -48,191 +49,287 @@ export const Templates: React.FC = () => {
   });
 
   const handleUseTemplate = (template: Template) => {
-    // Navigate to policy editor with template content
     navigate('/policies/new', { 
       state: { 
-        template: template,
-        initialContent: template.content 
+        initialContent: template.content,
+        templateName: template.name 
       } 
     });
   };
 
+  const handlePreviewTemplate = (template: Template) => {
+    // Open preview modal or navigate to preview page
+    console.log('Preview template:', template);
+  };
+
+  const handleCopyTemplate = (template: Template) => {
+    navigator.clipboard.writeText(template.content);
+    // Show success message
+  };
+
+  const mockTemplates: Template[] = [
+    {
+      id: '1',
+      name: 'Container Security Policy',
+      description: 'Ensures containers run securely by enforcing best practices like non-root users and immutable file systems.',
+      framework: 'SOC 2',
+      language: 'rego',
+      content: 'package kubernetes.security\n\ndefault allow = false\n\nallow {\n    input.kind == "Pod"\n    input.spec.securityContext.runAsNonRoot == true\n}'
+    },
+    {
+      id: '2',
+      name: 'Network Policy',
+      description: 'Requires network policies for all namespaces to control ingress and egress traffic.',
+      framework: 'CIS',
+      language: 'rego',
+      content: 'package kubernetes.network\n\ndefault allow = false\n\nallow {\n    input.kind == "NetworkPolicy"\n    input.metadata.namespace != "kube-system"\n}'
+    },
+    {
+      id: '3',
+      name: 'Resource Limits Policy',
+      description: 'Enforces resource limits and requests for all containers to prevent resource exhaustion.',
+      framework: 'HIPAA',
+      language: 'rego',
+      content: 'package kubernetes.resources\n\ndefault allow = false\n\nallow {\n    input.kind == "Pod"\n    input.spec.containers[_].resources.limits.cpu\n    input.spec.containers[_].resources.limits.memory\n}'
+    }
+  ];
+
   if (loading) {
     return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="w-16 h-16 border-4 border-niyama-black border-t-transparent animate-spin"></div>
+      <div className="min-h-screen bg-niyama-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-niyama-accent border-2 border-niyama-black mx-auto mb-4 flex items-center justify-center">
+            <FileText className="w-8 h-8 text-niyama-black" />
+          </div>
+          <p className="text-niyama-gray-600 font-medium">Loading templates...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-6 py-8 space-y-8">
+    <div className="min-h-screen bg-niyama-gray-100">
       {/* Header Section */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
-        <div className="flex-1">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-niyama-black flex items-center justify-center shadow-brutal">
-              <FileText className="w-6 h-6 text-niyama-white" />
+      <div className="bg-niyama-white border-b-2 border-niyama-black shadow-brutal">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+            <div className="flex-1">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-16 h-16 bg-niyama-accent flex items-center justify-center shadow-brutal">
+                  <FileText className="w-8 h-8 text-niyama-black" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-niyama-black text-display">
+                    Policy Templates
+                  </h1>
+                  <p className="text-body text-niyama-gray-600 mt-1">
+                    Pre-built policy templates for common use cases
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-niyama-black">
-                Policy Templates
-              </h1>
-              <p className="text-body text-niyama-gray-600 mt-1">
-                Pre-built policy templates for common use cases
-              </p>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="btn-secondary btn-lg flex items-center justify-center">
+                <Download className="w-5 h-5 mr-2" />
+                Export All
+              </button>
+              <button className="btn-accent btn-lg flex items-center justify-center">
+                <Plus className="w-5 h-5 mr-2" />
+                Create Template
+              </button>
             </div>
           </div>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-            <button className="btn-secondary btn-lg flex items-center justify-center">
-              <Download className="w-5 h-5 mr-2" />
-              Export All
-            </button>
-            <button className="btn-accent btn-lg flex items-center justify-center">
-              <Plus className="w-5 h-5 mr-2" />
-              Create Template
-            </button>
         </div>
       </div>
 
       {/* Filters Section */}
-      <div className="card">
-        <div className="card-header">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-niyama-info flex items-center justify-center shadow-brutal">
-              <Filter className="w-4 h-4 text-niyama-white" />
-            </div>
-            <h3 className="card-title">Filter Templates</h3>
-          </div>
-        </div>
-        <div className="card-content">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-niyama-gray-500 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search templates..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input pl-10"
-              />
+      <div className="bg-niyama-white border-b-2 border-niyama-black shadow-brutal">
+        <div className="container mx-auto px-6 py-6">
+          <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-niyama-black flex items-center justify-center shadow-brutal">
+                <Filter className="w-4 h-4 text-niyama-white" />
+              </div>
+              <h3 className="text-lg font-bold text-niyama-black">Filter Templates</h3>
             </div>
             
-            <select
-              value={selectedFramework}
-              onChange={(e) => setSelectedFramework(e.target.value)}
-              className="input"
-            >
-              {frameworks.map(framework => (
-                <option key={framework} value={framework}>
-                  {framework === 'all' ? 'All Frameworks' : framework}
-                </option>
-              ))}
-            </select>
-            
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="input"
-            >
-              {languages.map(language => (
-                <option key={language} value={language}>
-                  {language === 'all' ? 'All Languages' : language.toUpperCase()}
-                </option>
-              ))}
-            </select>
-            
-            <button className="btn-primary btn-md">
-              Apply Filters
-            </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="form-label">Search</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-niyama-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search templates..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="input pl-10"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="form-label">Framework</label>
+                <select
+                  value={selectedFramework}
+                  onChange={(e) => setSelectedFramework(e.target.value)}
+                  className="input"
+                >
+                  {frameworks.map(framework => (
+                    <option key={framework} value={framework}>
+                      {framework === 'all' ? 'All Frameworks' : framework}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="form-label">Language</label>
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className="input"
+                >
+                  {languages.map(language => (
+                    <option key={language} value={language}>
+                      {language === 'all' ? 'All Languages' : language.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="flex items-end">
+                <button className="btn-accent w-full">
+                  Apply Filters
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Templates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTemplates.map((template) => (
-          <div key={template.id} className="card hover:shadow-brutal-hover transition-all duration-150 ease-in-out cursor-pointer">
-            <div className="card-header">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-niyama-accent flex items-center justify-center shadow-brutal">
-                    {template.framework === 'Kubernetes' ? (
-                      <Shield className="h-5 w-5 text-niyama-black" />
-                    ) : template.framework === 'Docker' ? (
-                      <Code className="h-5 w-5 text-niyama-black" />
-                    ) : (
-                      <FileText className="h-5 w-5 text-niyama-black" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="card-title text-lg">{template.name}</h3>
-                    <p className="text-sm text-niyama-gray-600">{template.framework}</p>
-                  </div>
-                </div>
-                <span className="badge-primary">
-                  {template.language.toUpperCase()}
-                </span>
-              </div>
-            </div>
-            
-            <div className="card-content">
-              <p className="text-niyama-gray-700 text-sm mb-4 line-clamp-3">{template.description}</p>
-              
-              <div className="flex items-center justify-between text-sm text-niyama-gray-600 mb-4">
-                <div className="flex items-center">
-                  <Star className="h-4 w-4 mr-1" />
-                  4.8
-                </div>
-                <div className="flex items-center">
-                  <Download className="h-4 w-4 mr-1" />
-                  1250
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="badge-primary">
-                  <Tag className="h-3 w-3 mr-1" />
-                  {template.framework}
-                </span>
-                <span className="badge-primary">
-                  <Tag className="h-3 w-3 mr-1" />
-                  {template.language}
-                </span>
-              </div>
-            </div>
-            
-            <div className="card-footer">
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleUseTemplate(template)}
-                  className="btn-accent btn-md flex-1"
-                >
-                  <Zap className="w-4 h-4 mr-2" />
-                  Use Template
-                </button>
-                <button className="btn-secondary btn-md">
-                  Preview
-                </button>
-              </div>
-            </div>
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-niyama-black">
+            Templates ({filteredTemplates.length})
+          </h2>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`btn-secondary btn-sm ${viewMode === 'grid' ? 'bg-niyama-accent text-niyama-black' : ''}`}
+            >
+              Grid
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`btn-secondary btn-sm ${viewMode === 'list' ? 'bg-niyama-accent text-niyama-black' : ''}`}
+            >
+              List
+            </button>
           </div>
-        ))}
-      </div>
-
-      {filteredTemplates.length === 0 && (
-        <div className="card text-center py-12">
-          <div className="w-16 h-16 bg-niyama-gray-200 border-2 border-niyama-black rounded mx-auto mb-4 flex items-center justify-center">
-            <FileText className="w-8 h-8 text-niyama-black" />
-          </div>
-          <h3 className="text-heading-2 font-bold text-niyama-black mb-2">No templates found</h3>
-          <p className="text-niyama-gray-600">Try adjusting your search criteria or create a new template.</p>
         </div>
-      )}
+
+        {filteredTemplates.length === 0 ? (
+          <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-12 text-center">
+            <div className="w-16 h-16 bg-niyama-gray-200 border-2 border-niyama-black mx-auto mb-4 flex items-center justify-center">
+              <FileText className="w-8 h-8 text-niyama-gray-400" />
+            </div>
+            <h3 className="text-lg font-bold text-niyama-black mb-2">No templates found</h3>
+            <p className="text-niyama-gray-600 mb-4">
+              Try adjusting your search criteria or create a new template.
+            </p>
+            <button className="btn-accent">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Template
+            </button>
+          </div>
+        ) : (
+          <div className={`grid gap-6 ${
+            viewMode === 'grid' 
+              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+              : 'grid-cols-1'
+          }`}>
+            {mockTemplates.map((template) => (
+              <div key={template.id} className="bg-niyama-white border-2 border-niyama-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200">
+                {/* Template Header */}
+                <div className="bg-niyama-accent border-b-2 border-niyama-black p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-niyama-black mb-1">
+                        {template.name}
+                      </h3>
+                      <p className="text-sm text-niyama-black">
+                        {template.framework}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-niyama-black text-niyama-white px-2 py-1 text-xs font-bold">
+                        {template.language.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Template Content */}
+                <div className="p-6">
+                  <p className="text-niyama-gray-600 mb-4 line-clamp-3">
+                    {template.description}
+                  </p>
+
+                  {/* Template Stats */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-1">
+                        <Star className="w-4 h-4 text-niyama-accent" />
+                        <span className="text-sm font-medium text-niyama-black">4.8</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Download className="w-4 h-4 text-niyama-gray-400" />
+                        <span className="text-sm text-niyama-gray-600">1,250</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Template Tags */}
+                  <div className="flex items-center space-x-2 mb-4">
+                    <span className="bg-niyama-accent-light text-niyama-black px-2 py-1 text-xs font-bold border border-niyama-black">
+                      {template.framework}
+                    </span>
+                    <span className="bg-niyama-gray-200 text-niyama-black px-2 py-1 text-xs font-bold border border-niyama-black">
+                      {template.language}
+                    </span>
+                  </div>
+
+                  {/* Template Actions */}
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleUseTemplate(template)}
+                      className="btn-accent btn-sm flex-1 flex items-center justify-center"
+                    >
+                      <Zap className="w-4 h-4 mr-2" />
+                      Use Template
+                    </button>
+                    <button
+                      onClick={() => handlePreviewTemplate(template)}
+                      className="btn-secondary btn-sm flex items-center justify-center"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleCopyTemplate(template)}
+                      className="btn-secondary btn-sm flex items-center justify-center"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
