@@ -1,505 +1,244 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Play, CheckCircle, AlertCircle, Code, FileText, Zap, Settings, Copy, Download, Upload, Eye, EyeOff, Maximize2, Minimize2, Terminal, FileCode, TestTube } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { Save, Play, CheckCircle, AlertCircle, Code, Settings, Copy, Download, Upload, Eye, EyeOff, Maximize2, Minimize2, FileCode, TestTube, List, Grid } from 'lucide-react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { useTranslation } from '../hooks/useTranslation';
+import { usePolicyEditorStore } from '../store/policyEditorStore';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
-interface PolicyDetails {
+interface PolicyData {
+  id: string;
   name: string;
   description: string;
-  category: string;
-  severity: string;
+  content: string;
   language: string;
+  category: string;
   tags: string[];
-  accessLevel: string;
-}
-
-interface TestResult {
-  decision: string;
-  reason: string;
-  details?: any;
+  status: string;
 }
 
 export const PolicyEditor: React.FC = () => {
-  const [policyCode, setPolicyCode] = useState('');
-  const [policyDetails, setPolicyDetails] = useState<PolicyDetails>({
-    name: '',
-    description: '',
-    category: 'Security',
-    severity: 'Medium',
-    language: 'rego',
-    tags: [],
-    accessLevel: 'private'
-  });
-  const [isSaving, setIsSaving] = useState(false);
-  const [isTesting, setIsTesting] = useState(false);
-  const [testResult, setTestResult] = useState<TestResult | null>(null);
-  const [testInput, setTestInput] = useState('{\n  "kind": "Pod",\n  "spec": {\n    "securityContext": {\n      "runAsNonRoot": true\n    }\n  }\n}');
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [activeTab, setActiveTab] = useState<'code' | 'test' | 'results'>('code');
+  const [splitView, setSplitView] = useState<'code' | 'preview'>('code');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+  const [isTesting, setIsTesting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [testInput, setTestInput] = useState('{\n  "kind": "Pod",\n  "spec": {\n    "securityContext": {\n      "runAsNonRoot": true\n    }\n  }\n}');
+  const [policyName, setPolicyName] = useState('');
+  const [policyDescription, setPolicyDescription] = useState('');
+  const [policyLanguage, setPolicyLanguage] = useState('rego');
+  const [policyCategory, setPolicyCategory] = useState('security');
+  const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
+  const { t } = useTranslation();
+
+  const { policyCode, setPolicyCode } = usePolicyEditorStore();
+
+  // Fetch policy if editing existing
+  const { data: policyData, isLoading } = useQuery(['policy', params.id], () => {
+    if (params.id) {
+      return fetch(`http://localhost:8000/api/v1/policies/${params.id}`).then(res => res.json());
+    }
+    return null;
+  });
 
   useEffect(() => {
-    // Check if we have template data from navigation
-    if (location.state?.initialContent) {
-      setPolicyCode(location.state.initialContent);
+    if (policyData) {
+      setPolicyName(policyData.name);
+      setPolicyDescription(policyData.description);
+      setPolicyCode(policyData.content);
+      setPolicyLanguage(policyData.language);
+      setPolicyCategory(policyData.category);
     }
-  }, [location.state]);
+  }, [policyData]);
 
-  const handleSavePolicy = async () => {
-    if (!policyDetails.name.trim()) {
-      alert('Please enter a policy name');
-      return;
-    }
-
-    if (!policyCode.trim()) {
-      alert('Please enter policy code');
-      return;
-    }
-
+  const handleSave = async () => {
     setIsSaving(true);
-    setSaveMessage(null);
-
     try {
-      const response = await fetch('http://localhost:8000/api/v1/policies/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch(params.id ? '/api/v1/policies/update' : '/api/v1/policies', {
+        method: params.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: policyDetails.name,
-          description: policyDetails.description,
+          name: policyName,
+          description: policyDescription,
           content: policyCode,
-          language: policyDetails.language,
-          category: policyDetails.category,
-          tags: policyDetails.tags,
-          status: 'draft',
-          access_level: policyDetails.accessLevel,
+          language: policyLanguage,
+          category: policyCategory,
         }),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
-        setSaveMessage('Policy saved successfully!');
-        setTimeout(() => setSaveMessage(null), 3000);
+        // Handle success
       } else {
-        throw new Error(result.error || 'Failed to save policy');
+        // Handle error
       }
     } catch (error) {
-      console.error('Error saving policy:', error);
-      setSaveMessage(`Error: ${error instanceof Error ? error.message : 'Failed to save policy'}`);
+      // Handle error
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleTestPolicy = async () => {
-    if (!policyCode.trim()) {
-      alert('Please enter policy code to test');
-      return;
-    }
-
+  const handleTest = async () => {
     setIsTesting(true);
-    setTestResult(null);
-    setActiveTab('results');
-
     try {
-      let parsedTestInput;
-      try {
-        parsedTestInput = JSON.parse(testInput);
-      } catch (e) {
-        throw new Error('Invalid JSON in test input');
-      }
-
-      const response = await fetch('http://localhost:8000/api/v1/policies/test', {
+      const parsedInput = JSON.parse(testInput);
+      const response = await fetch('/api/v1/policies/test', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          policy_id: 1, // Mock policy ID for testing
-          test_input: parsedTestInput,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ policy: policyCode, input: parsedInput }),
       });
-
       const result = await response.json();
-
-      if (response.ok) {
-        setTestResult({
-          decision: result.evaluation.decision,
-          reason: result.evaluation.output,
-          details: result.evaluation
-        });
-      } else {
-        throw new Error(result.error || 'Failed to test policy');
-      }
+      setTestResult(result);
     } catch (error) {
-      console.error('Error testing policy:', error);
-      setTestResult({
-        decision: 'error',
-        reason: error instanceof Error ? error.message : 'Failed to test policy'
-      });
+      // Handle error
     } finally {
       setIsTesting(false);
     }
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(policyCode);
-    setSaveMessage('Code copied to clipboard!');
-    setTimeout(() => setSaveMessage(null), 2000);
-  };
-
-  const handleDownloadCode = () => {
-    const blob = new Blob([policyCode], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${policyDetails.name || 'policy'}.${policyDetails.language}`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPolicyCode(e.target?.result as string || '');
-      };
-      reader.readAsText(file);
-    }
-  };
+  if (isLoading) {
+    return <LoadingSpinner size="lg" />;
+  }
 
   return (
-    <div className={`min-h-screen bg-niyama-gray-100 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
-      {/* Top Navigation Bar */}
-      <div className="bg-niyama-white border-b-2 border-niyama-black shadow-brutal">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-niyama-black flex items-center justify-center shadow-brutal">
-                <Code className="w-6 h-6 text-niyama-white" />
+    <div className={`min-h-screen bg-white ${fullscreen ? 'fixed inset-0 z-50' : ''}`}>
+      {/* Header */}
+      <div className="bg-white border-b-2 border-gray-medium shadow-brutal">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-charcoal">Policy Editor</h1>
+            <div className="flex space-x-2">
+              <button onClick={() => setSplitView('code')} className={`px-4 py-2 border-2 border-gray-medium rounded ${splitView === 'code' ? 'bg-accent text-white' : ''}`}>
+                <Code className="w-4 h-4 mr-2" />
+                Code
+              </button>
+              <button onClick={() => setSplitView('preview')} className={`px-4 py-2 border-2 border-gray-medium rounded ${splitView === 'preview' ? 'bg-accent text-white' : ''}`}>
+                <Eye className="w-4 h-4 mr-2" />
+                Preview
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button onClick={handleTest} disabled={isTesting} className="btn-secondary px-4 py-2">
+              <TestTube className="w-4 h-4 mr-2" />
+              Test Policy
+            </button>
+            <button onClick={handleSave} disabled={isSaving} className="btn-accent px-4 py-2">
+              <Save className="w-4 h-4 mr-2" />
+              Save
+            </button>
+            <button onClick={() => setFullscreen(!fullscreen)} className="btn-secondary p-2">
+              {fullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Editor Area */}
+      <div className={`flex h-[calc(100vh-6rem)] ${sidebarCollapsed ? '' : 'lg:pl-80'}`}>
+        {/* Sidebar - Collapsible */}
+        <div className={`bg-white border-r-2 border-gray-medium w-80 h-full p-6 transition-all duration-300 ${sidebarCollapsed ? 'w-0 overflow-hidden' : ''}`}>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold text-charcoal mb-2">Policy Details</h3>
+            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-2">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-charcoal mb-1">Name</label>
+              <input
+                type="text"
+                value={policyName}
+                onChange={(e) => setPolicyName(e.target.value)}
+                className="w-full p-2 border-2 border-gray-medium rounded focus:ring-2 focus:ring-accent focus:border-accent"
+                placeholder="Enter policy name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-charcoal mb-1">Description</label>
+              <textarea
+                value={policyDescription}
+                onChange={(e) => setPolicyDescription(e.target.value)}
+                className="w-full p-2 border-2 border-gray-medium rounded focus:ring-2 focus:ring-accent focus:border-accent h-32"
+                placeholder="Describe the policy"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-bold text-charcoal mb-1">Language</label>
+                <select
+                  value={policyLanguage}
+                  onChange={(e) => setPolicyLanguage(e.target.value)}
+                  className="w-full p-2 border-2 border-gray-medium rounded focus:ring-2 focus:ring-accent focus:border-accent"
+                >
+                  <option value="rego">Rego</option>
+                  <option value="yaml">YAML</option>
+                  <option value="json">JSON</option>
+                </select>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-niyama-black">Policy Editor</h1>
-                <p className="text-sm text-niyama-gray-600">Create and edit Policy as Code rules</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <button 
-                className="btn-secondary btn-sm flex items-center"
-                onClick={() => setShowPreview(!showPreview)}
-              >
-                {showPreview ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-                {showPreview ? 'Hide Preview' : 'Preview'}
-              </button>
-              <button 
-                className="btn-secondary btn-sm flex items-center"
-                onClick={() => setIsFullscreen(!isFullscreen)}
-              >
-                {isFullscreen ? <Minimize2 className="w-4 h-4 mr-2" /> : <Maximize2 className="w-4 h-4 mr-2" />}
-                {isFullscreen ? 'Exit' : 'Fullscreen'}
-              </button>
-              <button 
-                className="btn-secondary btn-sm flex items-center"
-                onClick={handleTestPolicy}
-                disabled={isTesting}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                {isTesting ? 'Testing...' : 'Test'}
-              </button>
-              <button 
-                className="btn-accent btn-sm flex items-center"
-                onClick={handleSavePolicy}
-                disabled={isSaving}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? 'Saving...' : 'Save'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex h-[calc(100vh-80px)]">
-        {/* Code Editor - Main Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Editor Header */}
-          <div className="bg-niyama-accent border-b-2 border-niyama-black p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-niyama-black flex items-center justify-center shadow-brutal">
-                  <FileCode className="w-4 h-4 text-niyama-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-niyama-black">Policy Code</h3>
-                  <p className="text-sm text-niyama-black">
-                    {policyDetails.language.toUpperCase()} • {policyCode.length} characters
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button 
-                  onClick={handleCopyCode}
-                  className="btn-secondary btn-sm flex items-center"
+                <label className="block text-sm font-bold text-charcoal mb-1">Category</label>
+                <select
+                  value={policyCategory}
+                  onChange={(e) => setPolicyCategory(e.target.value)}
+                  className="w-full p-2 border-2 border-gray-medium rounded focus:ring-2 focus:ring-accent focus:border-accent"
                 >
-                  <Copy className="w-4 h-4 mr-1" />
-                  Copy
-                </button>
-                <button 
-                  onClick={handleDownloadCode}
-                  className="btn-secondary btn-sm flex items-center"
-                >
-                  <Download className="w-4 h-4 mr-1" />
-                  Download
-                </button>
-                <label className="btn-secondary btn-sm flex items-center cursor-pointer">
-                  <Upload className="w-4 h-4 mr-1" />
-                  Upload
-                  <input
-                    type="file"
-                    accept=".rego,.yaml,.yml,.json"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </label>
+                  <option value="security">Security</option>
+                  <option value="compliance">Compliance</option>
+                  <option value="resources">Resources</option>
+                </select>
               </div>
             </div>
-          </div>
-
-          {/* Code Editor */}
-          <div className="flex-1 p-0">
-            <textarea
-              value={policyCode}
-              onChange={(e) => setPolicyCode(e.target.value)}
-              placeholder="// Enter your policy code here...\npackage kubernetes.security\n\ndefault allow = false\n\nallow {\n    input.kind == 'Pod'\n    input.spec.securityContext.runAsNonRoot == true\n}"
-              className="w-full h-full bg-niyama-black text-niyama-accent p-6 font-mono text-sm border-0 resize-none focus:outline-none focus:ring-2 focus:ring-niyama-accent"
-            />
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">Tag 1</span>
+              <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">Tag 2</span>
+            </div>
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div className={`bg-niyama-white border-l-2 border-niyama-black shadow-brutal transition-all duration-300 ${
-          sidebarCollapsed ? 'w-16' : 'w-80'
-        }`}>
-          {/* Sidebar Header */}
-          <div className="bg-niyama-black border-b-2 border-niyama-black p-4">
-            <div className="flex items-center justify-between">
-              {!sidebarCollapsed && (
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
-                    <Settings className="w-4 h-4 text-niyama-black" />
-                  </div>
-                  <h3 className="text-lg font-bold text-niyama-white">Details</h3>
-                </div>
-              )}
-              <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="btn-secondary btn-sm"
-              >
-                {sidebarCollapsed ? '→' : '←'}
-              </button>
-            </div>
-          </div>
-
-          {!sidebarCollapsed && (
-            <div className="p-6 space-y-6">
-              {/* Policy Details */}
-              <div className="space-y-4">
-                <div>
-                  <label className="form-label">Policy Name</label>
-                  <input 
-                    className="input" 
-                    placeholder="Enter policy name"
-                    value={policyDetails.name}
-                    onChange={(e) => setPolicyDetails({...policyDetails, name: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="form-label">Description</label>
-                  <textarea 
-                    className="input" 
-                    rows={3}
-                    placeholder="Describe what this policy does"
-                    value={policyDetails.description}
-                    onChange={(e) => setPolicyDetails({...policyDetails, description: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="form-label">Category</label>
-                  <select 
-                    className="input"
-                    value={policyDetails.category}
-                    onChange={(e) => setPolicyDetails({...policyDetails, category: e.target.value})}
-                  >
-                    <option>Security</option>
-                    <option>Compliance</option>
-                    <option>Resource Management</option>
-                    <option>Network</option>
-                    <option>RBAC</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Language</label>
-                  <select 
-                    className="input"
-                    value={policyDetails.language}
-                    onChange={(e) => setPolicyDetails({...policyDetails, language: e.target.value})}
-                  >
-                    <option value="rego">REGO</option>
-                    <option value="yaml">YAML</option>
-                    <option value="json">JSON</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Access Level</label>
-                  <select 
-                    className="input"
-                    value={policyDetails.accessLevel}
-                    onChange={(e) => setPolicyDetails({...policyDetails, accessLevel: e.target.value})}
-                  >
-                    <option value="private">Private</option>
-                    <option value="org">Organization</option>
-                    <option value="public">Public</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Bottom Panel - Test Input and Results */}
-      <div className="bg-niyama-white border-t-2 border-niyama-black shadow-brutal">
-        {/* Tab Navigation */}
-        <div className="bg-niyama-black border-b-2 border-niyama-black">
-          <div className="flex">
-            <button
-              onClick={() => setActiveTab('test')}
-              className={`px-6 py-4 font-bold border-r-2 border-niyama-black flex items-center ${
-                activeTab === 'test' 
-                  ? 'bg-niyama-accent text-niyama-black' 
-                  : 'bg-niyama-black text-niyama-white hover:bg-niyama-gray-800'
-              }`}
-            >
-              <TestTube className="w-4 h-4 mr-2" />
-              Test Input
-            </button>
-            <button
-              onClick={() => setActiveTab('results')}
-              className={`px-6 py-4 font-bold border-r-2 border-niyama-black flex items-center ${
-                activeTab === 'results' 
-                  ? 'bg-niyama-accent text-niyama-black' 
-                  : 'bg-niyama-black text-niyama-white hover:bg-niyama-gray-800'
-              }`}
-            >
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Test Results
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6">
-          {activeTab === 'test' && (
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
-                  <TestTube className="w-4 h-4 text-niyama-black" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-niyama-black">Test Input</h3>
-                  <p className="text-sm text-niyama-gray-600">
-                    Enter JSON input to test your policy
-                  </p>
-                </div>
-              </div>
-              <div className="border-2 border-niyama-black">
+        {/* Main Content */}
+        <div className="flex-1 flex">
+          {splitView === 'code' ? (
+            <div className="w-full p-4">
+              <div className="h-full bg-gray-900 text-white rounded border-2 border-charcoal">
                 <textarea
-                  value={testInput}
-                  onChange={(e) => setTestInput(e.target.value)}
-                  className="w-full h-32 bg-niyama-black text-niyama-accent p-4 font-mono text-sm border-0 resize-none focus:outline-none focus:ring-2 focus:ring-niyama-accent"
-                  placeholder='{\n  "kind": "Pod",\n  "spec": {\n    "securityContext": {\n      "runAsNonRoot": true\n    }\n  }\n}'
+                  value={policyCode}
+                  onChange={(e) => setPolicyCode(e.target.value)}
+                  className="w-full h-full p-4 font-mono text-sm bg-transparent border-none outline-none resize-none text-white placeholder:text-gray-500"
+                  placeholder="// Write your policy code here..."
                 />
               </div>
             </div>
-          )}
-
-          {activeTab === 'results' && (
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-niyama-accent flex items-center justify-center shadow-brutal">
-                  <CheckCircle className="w-4 h-4 text-niyama-black" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-niyama-black">Test Results</h3>
-                  <p className="text-sm text-niyama-gray-600">
-                    Policy evaluation results will appear here
-                  </p>
-                </div>
-              </div>
-              {testResult ? (
-                <div className="space-y-4">
-                  <div className={`flex items-center space-x-3 p-4 border-2 ${
-                    testResult.decision === 'allow' 
-                      ? 'bg-niyama-accent border-niyama-black text-niyama-black' :
-                    testResult.decision === 'deny' 
-                      ? 'bg-niyama-error border-niyama-black text-niyama-white' :
-                      'bg-niyama-warning border-niyama-black text-niyama-black'
-                  }`}>
-                    {testResult.decision === 'allow' ? (
-                      <CheckCircle className="h-6 w-6" />
-                    ) : testResult.decision === 'deny' ? (
-                      <AlertCircle className="h-6 w-6" />
-                    ) : (
-                      <AlertCircle className="h-6 w-6" />
-                    )}
-                    <span className="font-bold text-lg">
-                      DECISION: {testResult.decision.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="bg-niyama-gray-100 border-2 border-niyama-black p-4">
-                    <pre className="text-sm text-niyama-gray-800 whitespace-pre-wrap font-mono">
-                      {testResult.reason}
+          ) : (
+            <div className="w-full p-4">
+              <div className="h-full bg-white border-2 border-charcoal rounded p-4 text-sm">
+                {testResult ? (
+                  <div className="p-4 bg-gray-50 border border-gray-medium">
+                    <h3 className="font-bold text-charcoal mb-2">Test Result</h3>
+                    <p className={`text-lg font-bold ${testResult.decision === 'allow' ? 'text-success' : 'text-error'}`}>
+                      Decision: {testResult.decision}
+                    </p>
+                    <pre className="text-gray-600 mt-2 whitespace-pre-wrap">
+                      {JSON.stringify(testResult.output, null, 2)}
                     </pre>
                   </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-niyama-gray-200 border-2 border-niyama-black mx-auto mb-4 flex items-center justify-center">
-                    <Play className="w-6 h-6 text-niyama-black" />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-500">
+                    <div className="text-center">
+                      <Eye className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      <p className="text-lg">Preview will appear here after testing</p>
+                    </div>
                   </div>
-                  <p className="text-niyama-gray-600 font-medium">
-                    Click "Test Policy" to see results
-                  </p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
         </div>
       </div>
-
-      {/* Save Message */}
-      {saveMessage && (
-        <div className={`fixed top-6 right-6 p-6 border-2 border-niyama-black shadow-brutal z-50 ${
-          saveMessage.includes('Error') 
-            ? 'bg-niyama-error text-niyama-white' 
-            : 'bg-niyama-accent text-niyama-black'
-        }`}>
-          <div className="flex items-center space-x-3">
-            {saveMessage.includes('Error') ? (
-              <AlertCircle className="w-6 h-6" />
-            ) : (
-              <CheckCircle className="w-6 h-6" />
-            )}
-            <span className="font-bold">{saveMessage}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

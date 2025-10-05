@@ -1,5 +1,6 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth, useUser } from '@clerk/clerk-react';
+import { useQuery } from 'react-query';
 import { Permission } from '../types';
 
 interface RoleGuardProps {
@@ -17,30 +18,62 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   fallback = null,
   requireAll = false,
 }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isSignedIn, getToken } = useAuth();
+  const { user } = useUser();
 
-  if (!isAuthenticated || !user) {
+  if (!isSignedIn || !user) {
     return <>{fallback}</>;
   }
 
-  // Check roles
+  // Check roles using Clerk's public metadata
   if (roles.length > 0) {
+    const userRole = user.publicMetadata?.role as string || 'user';
     const hasRequiredRole = requireAll
-      ? roles.every(role => user.role === role)
-      : roles.includes(user.role);
+      ? roles.every(role => userRole === role)
+      : roles.includes(userRole);
 
     if (!hasRequiredRole) {
       return <>{fallback}</>;
     }
   }
 
-  // Check permissions (if implemented in backend)
+  // Fetch and check permissions
+  const { data: userPermissions, isLoading, error } = useQuery(
+    ['userPermissions', user.id],
+    () => {
+      return getToken().then(token => {
+        return fetch('http://localhost:8000/api/v1/auth/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }).then(res => {
+          if (!res.ok) {
+            throw new Error('Failed to fetch user permissions');
+          }
+          return res.json();
+        });
+      });
+    },
+    {
+      enabled: !!user.id && permissions.length > 0,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      onError: (err) => {
+        console.error('Failed to load permissions:', err);
+      }
+    }
+  );
+
   if (permissions.length > 0) {
-    // This would need to be implemented based on your permission system
-    // For now, we'll assume all authenticated users have basic permissions
+    if (isLoading) {
+      return <>{fallback}</>; // Show fallback while loading
+    }
+    if (error || !userPermissions || !userPermissions.permissions) {
+      return <>{fallback}</>; // Show fallback on error or no permissions
+    }
+
     const hasRequiredPermission = requireAll
-      ? permissions.every(permission => true) // TODO: Implement actual permission check
-      : permissions.some(permission => true); // TODO: Implement actual permission check
+      ? permissions.every(perm => userPermissions.permissions.includes(perm as string))
+      : permissions.some(perm => userPermissions.permissions.includes(perm as string));
 
     if (!hasRequiredPermission) {
       return <>{fallback}</>;
@@ -77,4 +110,3 @@ export const DeveloperOnly: React.FC<{ children: React.ReactNode; fallback?: Rea
     {children}
   </RoleGuard>
 );
-

@@ -75,3 +75,14 @@ func (d *Database) Close() error {
 	}
 	return sqlDB.Close()
 }
+
+// Seed seeds the database with initial data
+func Seed(db *gorm.DB) error {
+	log.Println("🌱 Seeding database with initial data...")
+
+	// Add any initial data seeding logic here
+	// For now, we'll just log that seeding is complete
+	log.Println("✅ Database seeding completed")
+
+	return nil
+}

@@ -31,6 +31,11 @@
     "settings": "Settings",
     "logout": "Logout"
   },
+  "layout": {
+    "dashboardTitle": "Niyama Dashboard",
+    "systemStatus": "System Status",
+    "online": "ONLINE"
+  },
   "auth": {
     "login": "Login",
     "logout": "Logout",
@@ -206,23 +211,71 @@
   },
   "settings": {
     "title": "Settings",
-    "general": "General",
-    "appearance": "Appearance",
-    "language": "Language",
-    "timezone": "Timezone",
-    "notifications": "Notifications",
-    "security": "Security",
-    "privacy": "Privacy",
-    "data": "Data",
-    "backup": "Backup",
-    "restore": "Restore",
-    "export": "Export",
-    "import": "Import",
-    "api": "API",
-    "integrations": "Integrations",
-    "webhooks": "Webhooks",
-    "automation": "Automation",
-    "workflows": "Workflows"
+    "description": "Manage your account and organization settings",
+    "profile": "Profile",
+    "profileSection": {
+      "title": "Profile Settings",
+      "description": "Update your personal information and preferences",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "role": "Role",
+      "organization": "Organization",
+      "roles": {
+        "devSecOps": "DevSecOps Engineer",
+        "compliance": "Compliance Officer",
+        "platform": "Platform Engineer",
+        "admin": "Admin"
+      }
+    },
+    "localization": {
+      "title": "Localization Settings",
+      "description": "Configure language and regional settings",
+      "language": "Language",
+      "timezone": "Timezone",
+      "dateFormat": "Date Format",
+      "timeFormat": "Time Format"
+    },
+    "userManagement": {
+      "title": "User Management",
+      "description": "Manage users and their permissions"
+    },
+    "logs": {
+      "title": "System Logs",
+      "description": "View and manage system logs and audit trails",
+      "systemLogs": "System Logs",
+      "auditLogs": "Audit Logs",
+      "databaseLogs": "Database Logs",
+      "recentLogs": "Recent Logs"
+    },
+    "organization": {
+      "title": "Organization Management",
+      "description": "Manage organization settings and team structure",
+      "name": "Organization Name",
+      "domain": "Organization Domain",
+      "size": "Organization Size",
+      "industry": "Industry"
+    },
+    "security": {
+      "title": "Security Settings",
+      "description": "Configure security preferences and authentication",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "sessionTimeout": "Session Timeout"
+    },
+    "notifications": {
+      "title": "Notification Settings",
+      "description": "Configure how you receive notifications",
+      "emailNotifications": "Email Notifications",
+      "policyViolations": "Policy violations",
+      "systemAlerts": "System alerts",
+      "weeklyReports": "Weekly reports"
+    },
+    "integrations": {
+      "title": "Integration Settings",
+      "description": "Manage third-party integrations and API connections",
+      "apiKeys": "API Keys",
+      "configure": "Configure"
+    }
   },
   "ai": {
     "generate": "Generate",

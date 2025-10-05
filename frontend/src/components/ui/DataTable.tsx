@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronUp, ChevronDown, Search, Filter, MoreHorizontal } from 'lucide-react';
+import { ChevronUp, ChevronDown, Search, Filter } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export interface Column<T> {

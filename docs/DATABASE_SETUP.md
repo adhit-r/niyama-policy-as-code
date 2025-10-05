@@ -235,3 +235,4 @@ SELECT * FROM pg_stat_activity;
 ---
 
 **Need help?** Check the [troubleshooting guide](TROUBLESHOOTING.md) or open an issue on GitHub.
+

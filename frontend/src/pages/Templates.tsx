@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Star, Tag, FileText, Code, Shield, Zap, Search, Filter, Plus, Eye, Copy, ExternalLink } from 'lucide-react';
+import { Download, RefreshCw, Star, FileText, Zap, Search, Filter, Plus, Eye, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Template {
@@ -29,11 +29,17 @@ export const Templates: React.FC = () => {
 
   const fetchTemplates = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/templates');
-      const data = await response.json();
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/v1/templates`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: Template[] = await response.json();
       setTemplates(data);
     } catch (error) {
       console.error('Error fetching templates:', error);
+      // Fallback to empty array or local storage if needed
+      setTemplates([]);
     } finally {
       setLoading(false);
     }
@@ -59,40 +65,19 @@ export const Templates: React.FC = () => {
 
   const handlePreviewTemplate = (template: Template) => {
     // Open preview modal or navigate to preview page
-    console.log('Preview template:', template);
+    // For now, log and show alert
+    alert(`Preview: ${template.name}\n\n${template.content.substring(0, 200)}...`);
   };
 
-  const handleCopyTemplate = (template: Template) => {
-    navigator.clipboard.writeText(template.content);
-    // Show success message
-  };
-
-  const mockTemplates: Template[] = [
-    {
-      id: '1',
-      name: 'Container Security Policy',
-      description: 'Ensures containers run securely by enforcing best practices like non-root users and immutable file systems.',
-      framework: 'SOC 2',
-      language: 'rego',
-      content: 'package kubernetes.security\n\ndefault allow = false\n\nallow {\n    input.kind == "Pod"\n    input.spec.securityContext.runAsNonRoot == true\n}'
-    },
-    {
-      id: '2',
-      name: 'Network Policy',
-      description: 'Requires network policies for all namespaces to control ingress and egress traffic.',
-      framework: 'CIS',
-      language: 'rego',
-      content: 'package kubernetes.network\n\ndefault allow = false\n\nallow {\n    input.kind == "NetworkPolicy"\n    input.metadata.namespace != "kube-system"\n}'
-    },
-    {
-      id: '3',
-      name: 'Resource Limits Policy',
-      description: 'Enforces resource limits and requests for all containers to prevent resource exhaustion.',
-      framework: 'HIPAA',
-      language: 'rego',
-      content: 'package kubernetes.resources\n\ndefault allow = false\n\nallow {\n    input.kind == "Pod"\n    input.spec.containers[_].resources.limits.cpu\n    input.spec.containers[_].resources.limits.memory\n}'
+  const handleCopyTemplate = async (template: Template) => {
+    try {
+      await navigator.clipboard.writeText(template.content);
+      // Show success toast (implement Toast component if not exists)
+      console.log('Template copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
-  ];
+  };
 
   if (loading) {
     return (
@@ -102,6 +87,24 @@ export const Templates: React.FC = () => {
             <FileText className="w-8 h-8 text-niyama-black" />
           </div>
           <p className="text-niyama-gray-600 font-medium">Loading templates...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (templates.length === 0 && !loading) {
+    return (
+      <div className="min-h-screen bg-niyama-gray-100 flex items-center justify-center">
+        <div className="text-center p-8">
+          <div className="w-16 h-16 bg-niyama-gray-200 border-2 border-niyama-black mx-auto mb-4 flex items-center justify-center">
+            <FileText className="w-8 h-8 text-niyama-gray-400" />
+          </div>
+          <h3 className="text-xl font-bold text-niyama-black mb-2">No Templates Available</h3>
+          <p className="text-niyama-gray-600 mb-4">Templates will appear here once the backend is configured.</p>
+          <button onClick={fetchTemplates} className="btn-accent px-6 py-2">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Retry Load
+          </button>
         </div>
       </div>
     );
@@ -232,7 +235,7 @@ export const Templates: React.FC = () => {
         </div>
 
         {filteredTemplates.length === 0 ? (
-          <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-12 text-center">
+          <div className="bg-niyama-white border-2 border-niyama-black shadow-brutal p-12 text-center rounded">
             <div className="w-16 h-16 bg-niyama-gray-200 border-2 border-niyama-black mx-auto mb-4 flex items-center justify-center">
               <FileText className="w-8 h-8 text-niyama-gray-400" />
             </div>
@@ -240,9 +243,9 @@ export const Templates: React.FC = () => {
             <p className="text-niyama-gray-600 mb-4">
               Try adjusting your search criteria or create a new template.
             </p>
-            <button className="btn-accent">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Template
+            <button onClick={fetchTemplates} className="btn-accent">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Reload Templates
             </button>
           </div>
         ) : (
@@ -251,8 +254,8 @@ export const Templates: React.FC = () => {
               ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
               : 'grid-cols-1'
           }`}>
-            {mockTemplates.map((template) => (
-              <div key={template.id} className="bg-niyama-white border-2 border-niyama-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200">
+            {filteredTemplates.map((template) => (
+              <div key={template.id} className="bg-niyama-white border-2 border-niyama-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200 rounded">
                 {/* Template Header */}
                 <div className="bg-niyama-accent border-b-2 border-niyama-black p-4">
                   <div className="flex items-start justify-between">
@@ -265,7 +268,7 @@ export const Templates: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="bg-niyama-black text-niyama-white px-2 py-1 text-xs font-bold">
+                      <span className="bg-niyama-black text-niyama-white px-2 py-1 text-xs font-bold rounded">
                         {template.language.toUpperCase()}
                       </span>
                     </div>
@@ -278,7 +281,7 @@ export const Templates: React.FC = () => {
                     {template.description}
                   </p>
 
-                  {/* Template Stats */}
+                  {/* Template Stats - Dynamic */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-1">
@@ -294,11 +297,11 @@ export const Templates: React.FC = () => {
 
                   {/* Template Tags */}
                   <div className="flex items-center space-x-2 mb-4">
-                    <span className="bg-niyama-accent-light text-niyama-black px-2 py-1 text-xs font-bold border border-niyama-black">
+                    <span className="bg-niyama-accent-light text-niyama-black px-2 py-1 text-xs font-bold border border-niyama-black rounded">
                       {template.framework}
                     </span>
-                    <span className="bg-niyama-gray-200 text-niyama-black px-2 py-1 text-xs font-bold border border-niyama-black">
-                      {template.language}
+                    <span className="bg-niyama-gray-200 text-niyama-black px-2 py-1 text-xs font-bold border border-niyama-black rounded">
+                      {template.language.toUpperCase()}
                     </span>
                   </div>
 
@@ -307,6 +310,7 @@ export const Templates: React.FC = () => {
                     <button
                       onClick={() => handleUseTemplate(template)}
                       className="btn-accent btn-sm flex-1 flex items-center justify-center"
+                      aria-label={`Use ${template.name} template`}
                     >
                       <Zap className="w-4 h-4 mr-2" />
                       Use Template
@@ -314,12 +318,14 @@ export const Templates: React.FC = () => {
                     <button
                       onClick={() => handlePreviewTemplate(template)}
                       className="btn-secondary btn-sm flex items-center justify-center"
+                      aria-label={`Preview ${template.name}`}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleCopyTemplate(template)}
                       className="btn-secondary btn-sm flex items-center justify-center"
+                      aria-label={`Copy ${template.name} content`}
                     >
                       <Copy className="w-4 h-4" />
                     </button>

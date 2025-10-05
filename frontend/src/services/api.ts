@@ -1,16 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 import { 
-  User, 
-  AuthTokens, 
-  LoginRequest, 
-  RegisterRequest,
   Policy,
   PolicyTemplate,
   ComplianceFramework,
   ComplianceReport,
   AIPolicyGenerationRequest,
   AIPolicyGenerationResponse,
-  ApiResponse,
   PaginatedResponse,
   PaginationParams,
   FilterParams
@@ -28,14 +23,11 @@ class ApiService {
       },
     });
 
-    // Request interceptor
+    // Request interceptor - will be updated to use Clerk session token
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('auth_tokens');
-        if (token) {
-          const { accessToken } = JSON.parse(token);
-          config.headers.Authorization = `Bearer ${accessToken}`;
-        }
+        // Clerk will handle authentication via session tokens
+        // The backend will verify the session token
         return config;
       },
       (error) => {
@@ -47,217 +39,132 @@ class ApiService {
     this.api.interceptors.response.use(
       (response) => response,
       async (error) => {
-        const originalRequest = error.config;
-
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          try {
-            const token = localStorage.getItem('auth_tokens');
-            if (token) {
-              const { refreshToken } = JSON.parse(token);
-              const response = await this.refreshToken(refreshToken);
-              
-              localStorage.setItem('auth_tokens', JSON.stringify(response.tokens));
-              originalRequest.headers.Authorization = `Bearer ${response.tokens.accessToken}`;
-              
-              return this.api(originalRequest);
-            }
-          } catch (refreshError) {
-            localStorage.removeItem('auth_tokens');
-            window.location.href = '/login';
-            return Promise.reject(refreshError);
-          }
+        if (error.response?.status === 401) {
+          // Redirect to sign-in if unauthorized
+          window.location.href = '/sign-in';
         }
-
         return Promise.reject(error);
       }
     );
   }
 
-  // Auth methods
-  async login(credentials: LoginRequest): Promise<{ user: User; tokens: AuthTokens }> {
-    const response = await this.api.post<ApiResponse<{ user: User; tokens: AuthTokens }>>('/auth/login', credentials);
-    return response.data.data!;
-  }
-
-  async register(data: RegisterRequest): Promise<{ user: User; tokens: AuthTokens }> {
-    const response = await this.api.post<ApiResponse<{ user: User; tokens: AuthTokens }>>('/auth/register', data);
-    return response.data.data!;
-  }
-
-  async refreshToken(refreshToken: string): Promise<{ tokens: AuthTokens }> {
-    const response = await this.api.post<ApiResponse<{ tokens: AuthTokens }>>('/auth/refresh', { refreshToken });
-    return response.data.data!;
-  }
-
-  async getCurrentUser(): Promise<User> {
-    const response = await this.api.get<ApiResponse<User>>('/auth/me');
-    return response.data.data!;
-  }
-
-  async logout(): Promise<void> {
-    await this.api.post('/auth/logout');
-  }
-
-  // Policy methods
+  // Policy Management
   async getPolicies(params?: PaginationParams & FilterParams): Promise<PaginatedResponse<Policy>> {
-    const response = await this.api.get<PaginatedResponse<Policy>>('/policies', { params });
+    const response = await this.api.get('/policies', { params });
     return response.data;
   }
 
   async getPolicy(id: string): Promise<Policy> {
-    const response = await this.api.get<ApiResponse<Policy>>(`/policies/${id}`);
-    return response.data.data!;
+    const response = await this.api.get(`/policies/${id}`);
+    return response.data;
   }
 
-  async createPolicy(policy: Partial<Policy>): Promise<Policy> {
-    const response = await this.api.post<ApiResponse<Policy>>('/policies', policy);
-    return response.data.data!;
+  async createPolicy(policy: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>): Promise<Policy> {
+    const response = await this.api.post('/policies', policy);
+    return response.data;
   }
 
   async updatePolicy(id: string, policy: Partial<Policy>): Promise<Policy> {
-    const response = await this.api.put<ApiResponse<Policy>>(`/policies/${id}`, policy);
-    return response.data.data!;
+    const response = await this.api.put(`/policies/${id}`, policy);
+    return response.data;
   }
 
   async deletePolicy(id: string): Promise<void> {
     await this.api.delete(`/policies/${id}`);
   }
 
-  async evaluatePolicy(id: string, resource: any): Promise<any> {
-    const response = await this.api.post<ApiResponse<any>>(`/policies/${id}/evaluate`, { resource });
-    return response.data.data!;
+  async testPolicy(id: string, input: any): Promise<any> {
+    const response = await this.api.post(`/policies/${id}/test`, { input });
+    return response.data;
   }
 
-  // Template methods
+  // Template Management
   async getTemplates(params?: PaginationParams & FilterParams): Promise<PaginatedResponse<PolicyTemplate>> {
-    const response = await this.api.get<PaginatedResponse<PolicyTemplate>>('/templates', { params });
+    const response = await this.api.get('/templates', { params });
     return response.data;
   }
 
   async getTemplate(id: string): Promise<PolicyTemplate> {
-    const response = await this.api.get<ApiResponse<PolicyTemplate>>(`/templates/${id}`);
-    return response.data.data!;
+    const response = await this.api.get(`/templates/${id}`);
+    return response.data;
   }
 
-  async createTemplate(template: Partial<PolicyTemplate>): Promise<PolicyTemplate> {
-    const response = await this.api.post<ApiResponse<PolicyTemplate>>('/templates', template);
-    return response.data.data!;
+  async createTemplate(template: Omit<PolicyTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<PolicyTemplate> {
+    const response = await this.api.post('/templates', template);
+    return response.data;
   }
 
   async updateTemplate(id: string, template: Partial<PolicyTemplate>): Promise<PolicyTemplate> {
-    const response = await this.api.put<ApiResponse<PolicyTemplate>>(`/templates/${id}`, template);
-    return response.data.data!;
+    const response = await this.api.put(`/templates/${id}`, template);
+    return response.data;
   }
 
   async deleteTemplate(id: string): Promise<void> {
     await this.api.delete(`/templates/${id}`);
   }
 
-  // Compliance methods
+  // Compliance Management
   async getFrameworks(): Promise<ComplianceFramework[]> {
-    const response = await this.api.get<ApiResponse<ComplianceFramework[]>>('/compliance/frameworks');
-    return response.data.data!;
-  }
-
-  async getFramework(id: string): Promise<ComplianceFramework> {
-    const response = await this.api.get<ApiResponse<ComplianceFramework>>(`/compliance/frameworks/${id}`);
-    return response.data.data!;
-  }
-
-  async getReports(params?: PaginationParams): Promise<PaginatedResponse<ComplianceReport>> {
-    const response = await this.api.get<PaginatedResponse<ComplianceReport>>('/compliance/reports', { params });
+    const response = await this.api.get('/compliance/frameworks');
     return response.data;
   }
 
-  async generateReport(frameworkId: string): Promise<ComplianceReport> {
-    const response = await this.api.post<ApiResponse<ComplianceReport>>('/compliance/reports', { frameworkId });
-    return response.data.data!;
+  async getComplianceReport(frameworkId: string): Promise<ComplianceReport> {
+    const response = await this.api.get(`/compliance/reports/${frameworkId}`);
+    return response.data;
   }
 
-  // AI methods
+  async generateComplianceReport(frameworkId: string): Promise<ComplianceReport> {
+    const response = await this.api.post(`/compliance/reports/${frameworkId}/generate`);
+    return response.data;
+  }
+
+  // AI Policy Generation
   async generatePolicy(request: AIPolicyGenerationRequest): Promise<AIPolicyGenerationResponse> {
-    const response = await this.api.post<ApiResponse<AIPolicyGenerationResponse>>('/ai/generate-policy', request);
-    return response.data.data!;
+    const response = await this.api.post('/ai/generate-policy', request);
+    return response.data;
   }
 
-  async optimizePolicy(policyId: string, optimizationType: string): Promise<any> {
-    const response = await this.api.post<ApiResponse<any>>(`/ai/optimize-policy/${policyId}`, { optimizationType });
-    return response.data.data!;
-  }
-
-  // Monitoring methods
+  // Monitoring
   async getMetrics(): Promise<any> {
-    const response = await this.api.get<ApiResponse<any>>('/monitoring/metrics');
-    return response.data.data!;
-  }
-
-  async getAlerts(params?: PaginationParams): Promise<PaginatedResponse<any>> {
-    const response = await this.api.get<PaginatedResponse<any>>('/monitoring/alerts', { params });
+    const response = await this.api.get('/monitoring/metrics');
     return response.data;
   }
 
-  // Utility methods
-  setAuthToken(token: string): void {
-    this.api.defaults.headers.Authorization = `Bearer ${token}`;
-  }
-
-  clearAuthToken(): void {
-    delete this.api.defaults.headers.Authorization;
-  }
-
-  // File upload
-  async uploadFile(file: File, endpoint: string): Promise<any> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await this.api.post<ApiResponse<any>>(endpoint, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  async getAlerts(limit?: number): Promise<any[]> {
+    const response = await this.api.get('/monitoring/alerts', { 
+      params: { limit: limit || 10 } 
     });
-
-    return response.data.data!;
-  }
-
-  // Health check
-  async healthCheck(): Promise<any> {
-    const response = await this.api.get('/health');
     return response.data;
   }
 
-  // User Management
-  async getUsers(): Promise<User[]> {
-    const response = await this.api.get<ApiResponse<User[]>>('/users');
-    return response.data.data!;
+  // Analytics
+  async getAnalytics(timeRange?: string): Promise<any> {
+    const response = await this.api.get('/analytics', { 
+      params: { timeRange: timeRange || '7d' } 
+    });
+    return response.data;
   }
 
-  async getUser(id: string): Promise<User> {
-    const response = await this.api.get<ApiResponse<User>>(`/users/${id}`);
-    return response.data.data!;
+  // User Management (for admin users)
+  async getUsers(params?: PaginationParams): Promise<PaginatedResponse<any>> {
+    const response = await this.api.get('/users', { params });
+    return response.data;
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
-    const response = await this.api.put<ApiResponse<User>>(`/users/${id}`, data);
-    return response.data.data!;
+  async getUser(id: string): Promise<any> {
+    const response = await this.api.get(`/users/${id}`);
+    return response.data;
+  }
+
+  async updateUser(id: string, user: Partial<any>): Promise<any> {
+    const response = await this.api.put(`/users/${id}`, user);
+    return response.data;
   }
 
   async deleteUser(id: string): Promise<void> {
     await this.api.delete(`/users/${id}`);
   }
-
-  async createUser(data: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-    organizationId: string;
-  }): Promise<User> {
-    const response = await this.api.post<ApiResponse<User>>('/users', data);
-    return response.data.data!;
-  }
 }
 
 export const api = new ApiService();
-

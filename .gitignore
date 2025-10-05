@@ -1,248 +1,83 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-bun.lockb
-
-# Production builds
-dist/
-build/
-*.tgz
-*.tar.gz
-
-# Environment variables
+# General
+.DS_Store
+node_modules
+/dist
+/build
 .env
 .env.local
 .env.development.local
-.env.test.local
 .env.production.local
-
-# IDE and editor files
-.vscode/
-.idea/
+.env.test.local
+*.log
 *.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
 tmp/
-temp/
+tmp/**/*
+tmp
 
-# Go specific
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Qoder
+.qoder
 
-# Test binary, built with `go test -c`
-*.test
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
+# Netlify
+.netlify
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Yarn
+.yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
-# Go workspace file
-go.work
+# Next.js
+.next/
+out/
 
-# Python specific
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+# Playwright
+test-results/
+playwright-report/
 
-# PyInstaller
-*.manifest
-*.spec
+# Backend
+backend-go/niyama-backend
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# Frontend
+frontend/bun.lock
+frontend/node_modules
+frontend/package-lock.json
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
+# Kubernetes
+k8s/*.yaml
 
-# Translations
-*.mo
-*.pot
+# Docs
+docs/*.md
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
+# Scripts
+scripts/*.sh
 
-# Flask stuff:
-instance/
-.webassets-cache
+# Tests
+tests/*
 
-# Scrapy stuff:
-.scrapy
+# UI Audit
+UI_AUDIT_COMPLETE.md
+UI_AUDIT_REPORT.md
+UI_FIXES_SUMMARY.md
 
-# Sphinx documentation
-docs/_build/
+# Clerk
+CLERK_MIGRATION.md
+CLERK_TEST.md
 
-# PyBuilder
-target/
+# Quick Start
+QUICK_START_VALIDATION.md
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Policies
+backend-go/policies/
 
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# Docker
-.dockerignore
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Cache directories
-.cache/
-cache/
-
-# Model files (large AI models)
-*.bin
-*.safetensors
-*.h5
-*.pkl
-*.joblib
-
-# Hugging Face cache
-.cache/huggingface/
-transformers_cache/
-
-# Jupyter notebooks (optional - uncomment if you don't want to track them)
-# *.ipynb
-
-# Local development files
-local/
-dev/
-<<<<<<< Current (Your changes)
-=======
-
-# Archive directory for temporary/old files
-archive/
->>>>>>> Incoming (Background Agent changes)
+# Test Results
+test-results/

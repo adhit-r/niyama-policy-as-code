@@ -53,3 +53,4 @@ echo "🎯 Next steps:"
 echo "  1. Update your .env file with the database credentials"
 echo "  2. Start the backend server: go run main.go"
 echo "  3. Test the API endpoints"
+

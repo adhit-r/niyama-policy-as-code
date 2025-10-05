@@ -10,16 +10,15 @@ import {
   Shield, 
   UserCheck,
   UserX,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
-import { UserRole } from '../types';
+// import { UserRole } from '../types';
 
 export const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [showAddUser, setShowAddUser] = useState(false);
+  // const [showAddUser] = useState(false);
 
   const { data: users, isLoading, refetch } = useQuery(
     'users',
@@ -29,7 +28,7 @@ export const UserManagement: React.FC = () => {
     }
   );
 
-  const filteredUsers = users?.filter(user => {
+  const filteredUsers = users?.data?.filter((user: any) => {
     const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.lastName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -95,7 +94,7 @@ export const UserManagement: React.FC = () => {
           </div>
           
           <button
-            onClick={() => setShowAddUser(true)}
+            onClick={() => {/* setShowAddUser(true) */}}
             className="btn-primary btn-lg flex items-center justify-center"
           >
             <Plus className="w-5 h-5 mr-2" />
@@ -159,7 +158,7 @@ export const UserManagement: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers?.map((user) => (
+                  {filteredUsers?.map((user: any) => (
                     <tr key={user.id} className="border-b border-niyama-gray-200 hover:bg-niyama-gray-50">
                       <td className="p-4">
                         <div className="flex items-center space-x-3">

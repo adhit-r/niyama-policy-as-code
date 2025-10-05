@@ -31,6 +31,11 @@
     "settings": "Configuración",
     "logout": "Cerrar Sesión"
   },
+  "layout": {
+    "dashboardTitle": "Panel de Control Niyama",
+    "systemStatus": "Estado del Sistema",
+    "online": "EN LÍNEA"
+  },
   "auth": {
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión",
@@ -206,23 +211,71 @@
   },
   "settings": {
     "title": "Configuración",
-    "general": "General",
-    "appearance": "Apariencia",
-    "language": "Idioma",
-    "timezone": "Zona Horaria",
-    "notifications": "Notificaciones",
-    "security": "Seguridad",
-    "privacy": "Privacidad",
-    "data": "Datos",
-    "backup": "Respaldo",
-    "restore": "Restaurar",
-    "export": "Exportar",
-    "import": "Importar",
-    "api": "API",
-    "integrations": "Integraciones",
-    "webhooks": "Webhooks",
-    "automation": "Automatización",
-    "workflows": "Flujos de Trabajo"
+    "description": "Gestiona tu cuenta y configuraciones de la organización",
+    "profile": "Perfil",
+    "profileSection": {
+      "title": "Configuración de Perfil",
+      "description": "Actualiza tu información personal y preferencias",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "organization": "Organización",
+      "roles": {
+        "devSecOps": "Ingeniero DevSecOps",
+        "compliance": "Oficial de Cumplimiento",
+        "platform": "Ingeniero de Plataforma",
+        "admin": "Administrador"
+      }
+    },
+    "localization": {
+      "title": "Configuración de Localización",
+      "description": "Configura el idioma y configuraciones regionales",
+      "language": "Idioma",
+      "timezone": "Zona Horaria",
+      "dateFormat": "Formato de Fecha",
+      "timeFormat": "Formato de Hora"
+    },
+    "userManagement": {
+      "title": "Gestión de Usuarios",
+      "description": "Gestiona usuarios y sus permisos"
+    },
+    "logs": {
+      "title": "Registros del Sistema",
+      "description": "Ver y gestionar registros del sistema y pistas de auditoría",
+      "systemLogs": "Registros del Sistema",
+      "auditLogs": "Registros de Auditoría",
+      "databaseLogs": "Registros de Base de Datos",
+      "recentLogs": "Registros Recientes"
+    },
+    "organization": {
+      "title": "Gestión de Organización",
+      "description": "Gestiona configuraciones de la organización y estructura del equipo",
+      "name": "Nombre de la Organización",
+      "domain": "Dominio de la Organización",
+      "size": "Tamaño de la Organización",
+      "industry": "Industria"
+    },
+    "security": {
+      "title": "Configuración de Seguridad",
+      "description": "Configura preferencias de seguridad y autenticación",
+      "twoFactorAuth": "Autenticación de Dos Factores",
+      "sessionTimeout": "Tiempo de Espera de Sesión"
+    },
+    "notifications": {
+      "title": "Configuración de Notificaciones",
+      "description": "Configura cómo recibes notificaciones",
+      "emailNotifications": "Notificaciones por Correo",
+      "policyViolations": "Violaciones de políticas",
+      "systemAlerts": "Alertas del sistema",
+      "weeklyReports": "Reportes semanales"
+    },
+    "integrations": {
+      "title": "Configuración de Integraciones",
+      "description": "Gestiona integraciones de terceros y conexiones API",
+      "apiKeys": "Claves API",
+      "configure": "Configurar"
+    }
   },
   "ai": {
     "generate": "Generar",
