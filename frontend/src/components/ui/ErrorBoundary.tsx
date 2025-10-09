@@ -1,104 +1,65 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface State {
   hasError: boolean;
   error?: Error;
-  errorInfo?: ErrorInfo;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false,
+  };
 
-  static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ error, errorInfo });
-    
-    // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
-    }
-    
-    // Call custom error handler if provided
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
-    }
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
   }
 
-  handleRetry = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  private handleReset = () => {
+    this.setState({ hasError: false, error: undefined });
+    // You might want to also navigate the user away or reload the page
+    window.location.reload();
   };
 
-  render() {
+  public render() {
     if (this.state.hasError) {
-      // Custom fallback UI
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      // Default error UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-niyama-gray-100 p-6">
-          <div className="max-w-md w-full bg-niyama-white border-2 border-niyama-black shadow-brutal p-8 text-center">
-            <div className="w-16 h-16 bg-niyama-error mx-auto mb-4 flex items-center justify-center shadow-brutal">
-              <AlertTriangle className="w-8 h-8 text-niyama-white" />
+        <div className="flex flex-col items-center justify-center h-full bg-niyama-gray-50 p-8 text-center" role="alert">
+          <div className="bg-white p-12 border-4 border-niyama-error shadow-brutal-lg rounded-lg max-w-2xl">
+            <div className="flex justify-center items-center w-20 h-20 bg-niyama-error mx-auto rounded-full border-4 border-niyama-black mb-6">
+                <AlertCircle className="w-10 h-10 text-white" />
             </div>
-            
-            <h2 className="text-xl font-bold text-niyama-black mb-2">
-              Something went wrong
-            </h2>
-            
+            <h1 className="text-3xl font-bold text-niyama-black mb-2">Oops! Something went wrong.</h1>
             <p className="text-niyama-gray-600 mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+              We're sorry for the inconvenience. An unexpected error occurred. Please try refreshing the page.
             </p>
             
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="mb-6 text-left">
-                <summary className="cursor-pointer text-sm font-medium text-niyama-gray-700 mb-2">
-                  Error Details (Development)
-                </summary>
-                <div className="bg-niyama-gray-900 text-niyama-white p-4 rounded-none border border-niyama-black text-xs font-mono overflow-auto max-h-32">
-                  <div className="mb-2">
-                    <strong>Error:</strong> {this.state.error.message}
-                  </div>
-                  {this.state.error.stack && (
-                    <div>
-                      <strong>Stack:</strong>
-                      <pre className="whitespace-pre-wrap mt-1">{this.state.error.stack}</pre>
-                    </div>
-                  )}
-                </div>
+              <details className="bg-niyama-gray-100 border-2 border-niyama-black p-4 text-left mb-6 text-sm">
+                <summary className="font-bold cursor-pointer">Error Details</summary>
+                <pre className="mt-2 whitespace-pre-wrap font-mono text-niyama-error text-xs">
+                  {this.state.error.toString()}
+                  <br />
+                  {this.state.error.stack}
+                </pre>
               </details>
             )}
-            
-            <div className="flex space-x-4 justify-center">
-              <button
-                onClick={this.handleRetry}
-                className="btn-primary btn-md flex items-center"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Try Again
-              </button>
-              
-              <button
-                onClick={() => window.location.reload()}
-                className="btn-secondary btn-md"
-              >
-                Refresh Page
-              </button>
-            </div>
+
+            <button
+              onClick={this.handleReset}
+              className="bg-niyama-accent px-8 py-4 font-bold text-niyama-black border-2 border-niyama-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200 flex items-center gap-2 mx-auto"
+            >
+              <RefreshCw className="w-5 h-5" />
+              Refresh Page
+            </button>
           </div>
         </div>
       );
@@ -108,10 +69,4 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Hook for functional components to trigger error boundary
-export const useErrorHandler = () => {
-  return (error: Error, errorInfo?: ErrorInfo) => {
-    // This will be caught by the nearest ErrorBoundary
-    throw error;
-  };
-};
+export default ErrorBoundary;

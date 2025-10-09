@@ -19,10 +19,10 @@
   --niyama-accent: #ff6b35;
   --niyama-accent-dark: #e55a2b;
   --niyama-accent-light: #ff8c69;
-  --niyama-success: #22c55e;
+  --niyama-success: #ff6b35;
   --niyama-warning: #f59e0b;
   --niyama-error: #ef4444;
-  --niyama-info: #3b82f6;
+  --niyama-info: #ff6b35;
 
   /* Typography */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -544,7 +544,7 @@ body {
 }
 
 .status-success {
-  background-color: rgba(34, 197, 94, 0.1);
+  background-color: rgba(255, 107, 53, 0.1);
   color: var(--niyama-success);
   border: 1px solid var(--niyama-success);
 }
@@ -562,7 +562,7 @@ body {
 }
 
 .status-info {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(255, 107, 53, 0.1);
   color: var(--niyama-info);
   border: 1px solid var(--niyama-info);
 }

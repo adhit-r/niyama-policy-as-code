@@ -338,7 +338,7 @@ export const DESIGN_TOKENS = {
       900: '#171717',
     },
     semantic: {
-      success: '#22c55e',
+      success: '#ff6b35',
       successLight: '#dcfce7',
       successDark: '#16a34a',
       warning: '#f59e0b',
@@ -347,7 +347,7 @@ export const DESIGN_TOKENS = {
       error: '#ef4444',
       errorLight: '#fee2e2',
       errorDark: '#dc2626',
-      info: '#3b82f6',
+      info: '#ff6b35',
       purple: '#8b5cf6',
       purpleLight: '#ede9fe',
       purpleDark: '#7c3aed',

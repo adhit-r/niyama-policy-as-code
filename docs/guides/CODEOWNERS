@@ -1,0 +1,21 @@
+# Global code owners
+* @adhit-r
+
+# Backend Go code
+/backend-go/ @adhit-r
+
+# Frontend React code  
+/frontend/ @adhit-r
+
+# Kubernetes manifests
+/k8s/ @adhit-r
+
+# CI/CD configuration
+/.github/ @adhit-r
+
+# Documentation
+*.md @adhit-r
+/docs/ @adhit-r
+
+# Testing
+/tests/ @adhit-r

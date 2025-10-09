@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ErrorBoundary } from '../ui/ErrorBoundary';
+import ErrorBoundary from '../ui/ErrorBoundary';
 
 // Component that throws an error
 const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
@@ -71,36 +71,6 @@ describe('ErrorBoundary', () => {
     expect(screen.queryByText('Error Details (Development)')).not.toBeInTheDocument();
 
     process.env.NODE_ENV = originalEnv;
-  });
-
-  it('calls onError callback when error occurs', () => {
-    const onError = vi.fn();
-
-    render(
-      <ErrorBoundary onError={onError}>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
-    );
-
-    expect(onError).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Test error'
-      }),
-      expect.any(Object)
-    );
-  });
-
-  it('renders custom fallback when provided', () => {
-    const customFallback = <div>Custom error message</div>;
-
-    render(
-      <ErrorBoundary fallback={customFallback}>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
-    );
-
-    expect(screen.getByText('Custom error message')).toBeInTheDocument();
-    expect(screen.queryByText('Something went wrong')).not.toBeInTheDocument();
   });
 
   it('retries when retry button is clicked', () => {
