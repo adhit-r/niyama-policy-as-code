@@ -20,7 +20,11 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export const Dashboard: React.FC = () => {
   const { t } = useTranslation();
-  
+  const [dateRange, setDateRange] = React.useState({
+    from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    to: new Date()
+  });
+
   const { 
     data: metrics,
     isLoading: metricsLoading, 
@@ -59,7 +63,7 @@ export const Dashboard: React.FC = () => {
     }
   );
 
-  const alerts = alertsData?.alerts || [];
+  const alerts = alertsData || [];
 
   const handleRefresh = () => {
     refetchMetrics();
@@ -97,168 +101,6 @@ export const Dashboard: React.FC = () => {
       </div>
     );
   }
-
-  return (
-    <div className="min-h-screen bg-white p-8">
-      {/* Header - Asymmetrical Layout */}
-      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-8">
-        <div className="flex-1">
-          <h1 className="text-display font-bold text-charcoal mb-2">
-            {t('dashboard.title')}
-          </h1>
-          <p className="text-body-lg text-gray-medium">
-            Monitor your policy compliance and system health in real-time
-          </p>
-        </div>
-        
-        <div className="flex items-center space-x-4 self-stretch">
-          <button
-            onClick={handleRefresh}
-            disabled={metricsFetching || alertsFetching}
-            className="flex items-center space-x-2 px-4 py-3 bg-white border-2 border-charcoal shadow-brutal hover:shadow-brutal-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 rounded-md"
-          >
-            <RefreshCw className={`w-5 h-5 text-accent ${(metricsFetching || alertsFetching) ? 'animate-spin' : ''}`} />
-            <span className="font-bold text-charcoal">Refresh</span>
-          </button>
-          
-          <button className="flex items-center space-x-2 px-6 py-3 bg-accent text-white border-2 border-accent shadow-brutal hover:shadow-brutal-lg transition-all duration-200 hover:scale-105 font-bold rounded-md">
-            <Plus className="w-5 h-5" />
-            <span>New Policy</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Asymmetrical Grid - Neo-Brutalist Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
-        {/* Card 1 - Compliance Score - Larger for emphasis */}
-        <div className="lg:col-span-1 row-span-2 bg-white border-2 border-charcoal shadow-brutal-lg p-6 hover:shadow-brutal-xl transition-all duration-300 rounded-md">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-success border-2 border-charcoal flex items-center justify-center shadow-brutal rounded">
-              <CheckCircle className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex items-center space-x-1 text-sm font-bold text-success">
-              <ArrowUp className="w-4 h-4" />
-              <span>+5.2%</span>
-            </div>
-          </div>
-          <h3 className="text-heading-1 font-bold text-charcoal mb-1">94.2%</h3>
-          <p className="text-body text-gray-medium font-medium">Overall Compliance</p>
-          <div className="w-full bg-gray-200 border-2 border-charcoal h-2 mt-4 rounded overflow-hidden">
-            <div className="bg-success h-full" style={{ width: '94.2%' }}></div>
-          </div>
-        </div>
-
-        {/* Card 2 - Active Policies */}
-        <div className="bg-white border-2 border-charcoal shadow-brutal p-6 hover:shadow-brutal-lg transition-all duration-300 rounded-md">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-info border-2 border-charcoal flex items-center justify-center shadow-brutal rounded">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex items-center space-x-1 text-sm font-bold text-info">
-              <ArrowUp className="w-4 h-4" />
-              <span>+12</span>
-            </div>
-          </div>
-          <h3 className="text-heading-2 font-bold text-charcoal mb-1">247</h3>
-          <p className="text-body text-gray-medium font-medium">Active Policies</p>
-        </div>
-
-        {/* Card 3 - Violations - Highlighted with red accent */}
-        <div className="bg-white border-2 border-charcoal shadow-brutal p-6 hover:shadow-brutal-lg transition-all duration-300 rounded-md">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-warning border-2 border-charcoal flex items-center justify-center shadow-brutal rounded">
-              <AlertTriangle className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex items-center space-x-1 text-sm font-bold text-error">
-              <ArrowDown className="w-4 h-4" />
-              <span>-8</span>
-            </div>
-          </div>
-          <h3 className="text-heading-2 font-bold text-charcoal mb-1">23</h3>
-          <p className="text-body text-gray-medium font-medium">Open Violations</p>
-        </div>
-
-        {/* Card 4 - System Health */}
-        <div className="bg-white border-2 border-charcoal shadow-brutal p-6 hover:shadow-brutal-lg transition-all duration-300 rounded-md">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-accent border-2 border-charcoal flex items-center justify-center shadow-brutal rounded">
-              <Activity className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex items-center space-x-2 text-sm font-bold text-success">
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-              <span>Online</span>
-            </div>
-          </div>
-          <h3 className="text-heading-2 font-bold text-charcoal mb-1">99.9%</h3>
-          <p className="text-body text-gray-medium font-medium">Uptime</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Activity - Larger asymmetric card */}
-        <div className="lg:col-span-2 bg-white border-2 border-charcoal shadow-brutal p-6 hover:shadow-brutal-lg transition-all duration-300 rounded-md">
-          <div className="bg-neutral-warm border-b-2 border-charcoal p-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-heading-3 font-bold text-charcoal">Recent Activity</h3>
-              <button className="flex items-center space-x-2 text-sm font-bold text-charcoal hover:text-accent">
-                <span>View All</span>
-              </button>
-            </div>
-          </div>
-          <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
-            {alerts.map((alert) => (
-              <div key={alert.id} className="flex items-start space-x-4 p-4 bg-gray-50 border-2 border-charcoal rounded-md hover:bg-accent-light transition-colors duration-200">
-                <div className={`w-10 h-10 border-2 border-charcoal flex items-center justify-center rounded flex-shrink-0 ${
-                  alert.severity === 'high' ? 'bg-error text-white' :
-                  alert.severity === 'medium' ? 'bg-warning text-white' :
-                  'bg-success text-white'
-                }`}>
-                  <AlertTriangle className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-charcoal text-heading-3 truncate">{alert.title}</h4>
-                  <p className="text-gray-medium text-body">{alert.message}</p>
-                  <p className="text-xs text-gray-medium mt-1">{alert.timestamp}</p>
-                </div>
-              </div>
-            ))}
-            {alerts.length === 0 && (
-              <div className="text-center py-8 text-gray-medium">
-                <p className="text-body-lg">No recent activity</p>
-                <p className="text-caption">Check back later for updates</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="space-y-4">
-          <div className="bg-white border-2 border-charcoal shadow-brutal p-4 rounded-md">
-            <div className="bg-accent border-b-2 border-charcoal p-4 rounded-t-md">
-              <h3 className="text-lg font-bold text-white">Quick Actions</h3>
-            </div>
-            <div className="p-4 space-y-2">
-              {[
-                { icon: Plus, label: "Create Policy", color: "bg-accent text-white" },
-                { icon: FileText, label: "Browse Templates", color: "bg-info text-white" },
-                { icon: BarChart3, label: "Run Report", color: "bg-success text-white" },
-                { icon: Settings, label: "Configure Integrations", color: "bg-warning text-white" }
-              ].map((action, index) => {
-                const Icon = action.icon;
-                return (
-                  <button key={index} className={`w-full flex items-center space-x-3 p-3 border-2 border-charcoal shadow-brutal hover:shadow-brutal-lg transition-all duration-200 hover:scale-105 rounded-md ${action.color}`}>
-                    <Icon className="w-5 h-5" />
-                    <span className="font-bold">{action.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
   return (
     <div className="space-y-8">

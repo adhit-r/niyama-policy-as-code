@@ -1,33 +1,166 @@
-# General
-.DS_Store
-node_modules
-/dist
-/build
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Production builds
+dist/
+build/
+backend/bin/
+
+# Environment variables (CRITICAL - Never commit real secrets!)
 .env
 .env.local
 .env.development.local
-.env.production.local
 .env.test.local
-*.log
-*.swp
-tmp/
-tmp/**/*
-tmp
+.env.production.local
+config/*/.env
+!config/*/.env.example
+frontend/.env
+backend/.env
 
-# Qoder
-.qoder
+# API Keys and Secrets (NEVER COMMIT)
+**/pk_test_*
+**/sk_test_*
+**/whsec_*
+**/*API_KEY*
+**/*SECRET*
+**/*PASSWORD*
+**/*TOKEN*
 
-# VSCode
+# IDE files
 .vscode/
 !.vscode/settings.json
 !.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/tasks.json
+.idea/
+*.swp
+*.swo
 
-# Netlify
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Binaries for programs and plugins
+backend/niyama-backend
+backend/bin/
+backend/tmp/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+infrastructure/kubernetes/secrets/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+infrastructure/terraform/.terraform/
+
+# Helm
+infrastructure/helm/charts/
+*.tgz
+
+# Monitoring
+infrastructure/monitoring/data/
+
+# Local development
+.local/
+tmp/
+temp/
+.cache/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Redis
+dump.rdb
+
+# Certificates
+*.pem
+*.key
+*.crt
+*.p12
+
+# Secrets
+secrets/
+.secrets/
+
+# Backup files
+*.bak
+*.backup
+
+# Editor backups
+*~
+.#*
+#*#
+
+# Python (for scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+
+# Tools
+tools/bin/
+tools/tmp/
+
+# Legacy files (to be cleaned up)
+.qoder
+/archive
 .netlify
-
-# Yarn
 .yarn
 .yarn/*
 !.yarn/patches
@@ -35,49 +168,12 @@ tmp
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# Next.js
 .next/
 out/
-
-# Playwright
-test-results/
-playwright-report/
-
-# Backend
-backend-go/niyama-backend
-
-# Frontend
 frontend/bun.lock
-frontend/node_modules
-frontend/package-lock.json
-
-# Kubernetes
-k8s/*.yaml
-
-# Docs
-docs/*.md
-
-# Scripts
-scripts/*.sh
-
-# Tests
-tests/*
-
-# UI Audit
 UI_AUDIT_COMPLETE.md
 UI_AUDIT_REPORT.md
 UI_FIXES_SUMMARY.md
-
-# Clerk
 CLERK_MIGRATION.md
 CLERK_TEST.md
-
-# Quick Start
 QUICK_START_VALIDATION.md
-
-# Policies
-backend-go/policies/
-
-# Test Results
-test-results/

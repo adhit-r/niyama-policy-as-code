@@ -61,7 +61,7 @@ export const Reports: React.FC = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <button 
-            onClick={refetch}
+            onClick={() => refetch()}
             className="px-4 py-2 bg-white border-2 border-charcoal text-charcoal shadow-brutal hover:shadow-brutal-lg transition-all duration-200"
           >
             Refresh

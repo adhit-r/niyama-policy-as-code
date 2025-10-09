@@ -18,10 +18,11 @@ import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
 // Get Clerk publishable key from environment variables
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_placeholder';
 
-if (!clerkPubKey) {
-  throw new Error('Missing Clerk publishable key. Please add VITE_CLERK_PUBLISHABLE_KEY to your environment variables.');
+// For development, we'll use a placeholder key if none is provided
+if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
+  console.warn('⚠️ Using placeholder Clerk key for development. Set VITE_CLERK_PUBLISHABLE_KEY for production.');
 }
 
 function App() {

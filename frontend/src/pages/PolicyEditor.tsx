@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Play, CheckCircle, AlertCircle, Code, Settings, Copy, Download, Upload, Eye, EyeOff, Maximize2, Minimize2, FileCode, TestTube, List, Grid } from 'lucide-react';
+import { Save, Code, Eye, Maximize2, Minimize2, TestTube, ChevronLeft } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { useTranslation } from '../hooks/useTranslation';
