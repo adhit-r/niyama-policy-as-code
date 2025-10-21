@@ -200,3 +200,43 @@ func (s *UserService) GetUserOrganizations(userID uint) ([]models.Organization, 
 
 	return organizations, nil
 }
+
+type UserStats struct {
+	TotalPolicies      int64 `json:"total_policies"`
+	ActivePolicies     int64 `json:"active_policies"`
+	TotalEvaluations   int64 `json:"total_evaluations"`
+	RecentEvaluations  int64 `json:"recent_evaluations"` // Last 7 days
+	OrganizationsCount int64 `json:"organizations_count"`
+}
+
+func (s *UserService) GetUserStats(userID uint) (*UserStats, error) {
+	stats := &UserStats{}
+
+	// Count total policies created by user
+	if err := s.db.DB.Model(&models.Policy{}).Where("author_id = ?", userID).Count(&stats.TotalPolicies).Error; err != nil {
+		return nil, err
+	}
+
+	// Count active policies
+	if err := s.db.DB.Model(&models.Policy{}).Where("author_id = ? AND status = ?", userID, models.StatusActive).Count(&stats.ActivePolicies).Error; err != nil {
+		return nil, err
+	}
+
+	// Count total evaluations
+	if err := s.db.DB.Model(&models.PolicyEvaluation{}).Where("user_id = ?", userID).Count(&stats.TotalEvaluations).Error; err != nil {
+		return nil, err
+	}
+
+	// Count recent evaluations (last 7 days)
+	sevenDaysAgo := "NOW() - INTERVAL '7 days'"
+	if err := s.db.DB.Model(&models.PolicyEvaluation{}).Where("user_id = ? AND created_at > ?", userID, sevenDaysAgo).Count(&stats.RecentEvaluations).Error; err != nil {
+		return nil, err
+	}
+
+	// Count organizations user belongs to
+	if err := s.db.DB.Model(&models.UserOrganizationRole{}).Where("user_id = ?", userID).Count(&stats.OrganizationsCount).Error; err != nil {
+		return nil, err
+	}
+
+	return stats, nil
+}

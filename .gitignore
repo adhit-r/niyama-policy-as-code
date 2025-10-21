@@ -136,6 +136,9 @@ dump.rdb
 secrets/
 .secrets/
 
+# Kiro specs (development/architecture planning)
+.kiro/
+
 # Backup files
 *.bak
 *.backup

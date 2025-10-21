@@ -148,3 +148,19 @@ func (h *UserHandler) GetUserOrganizations(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": organizations})
 }
+
+func (h *UserHandler) GetUserStats(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		return
+	}
+
+	stats, err := h.service.GetUserStats(userID.(uint))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": stats})
+}

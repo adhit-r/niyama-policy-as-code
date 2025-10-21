@@ -17,7 +17,7 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.49.1",
     "@hookform/resolvers": "^3.3.2",
-    "@monaco-editor/react": "^4.6.0",
+    "@monaco-editor/react": "^4.7.0",
     "axios": "^1.6.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",

@@ -12,11 +12,15 @@ import (
 )
 
 type PolicyHandler struct {
-	service *services.PolicyService
+	service        *services.PolicyService
+	versionService *services.PolicyVersionService
 }
 
-func NewPolicyHandler(service *services.PolicyService) *PolicyHandler {
-	return &PolicyHandler{service: service}
+func NewPolicyHandler(service *services.PolicyService, versionService *services.PolicyVersionService) *PolicyHandler {
+	return &PolicyHandler{
+		service:        service,
+		versionService: versionService,
+	}
 }
 
 // GetPolicies retrieves policies based on user permissions
@@ -227,4 +231,141 @@ func (h *PolicyHandler) TestPolicy(c *gin.Context) {
 		"message":    "Policy evaluation completed",
 		"evaluation": evaluation,
 	})
+}
+
+// GetEvaluationHistory retrieves recent policy evaluations
+func (h *PolicyHandler) GetEvaluationHistory(c *gin.Context) {
+	// Parse limit parameter
+	limitStr := c.DefaultQuery("limit", "10")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 10
+	}
+
+	// For development, use mock user and org data
+	userID := uint(1)
+	orgID := uint(1)
+
+	evaluations, err := h.service.GetEvaluationHistory(userID, orgID, limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"evaluations": evaluations,
+		"count":       len(evaluations),
+	})
+}
+
+// GetPolicyVersions retrieves all versions of a policy
+func (h *PolicyHandler) GetPolicyVersions(c *gin.Context) {
+	policyIDStr := c.Param("id")
+	policyID, err := strconv.ParseUint(policyIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid policy ID"})
+		return
+	}
+
+	versions, err := h.versionService.GetVersions(uint(policyID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"versions": versions,
+		"count":    len(versions),
+	})
+}
+
+// GetPolicyVersion retrieves a specific version of a policy
+func (h *PolicyHandler) GetPolicyVersion(c *gin.Context) {
+	policyIDStr := c.Param("id")
+	versionStr := c.Param("version")
+
+	policyID, err := strconv.ParseUint(policyIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid policy ID"})
+		return
+	}
+
+	version, err := strconv.Atoi(versionStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid version number"})
+		return
+	}
+
+	policyVersion, err := h.versionService.GetVersion(uint(policyID), version)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, policyVersion)
+}
+
+// RollbackPolicyVersion rolls back a policy to a specific version
+func (h *PolicyHandler) RollbackPolicyVersion(c *gin.Context) {
+	policyIDStr := c.Param("id")
+	versionStr := c.Param("version")
+
+	policyID, err := strconv.ParseUint(policyIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid policy ID"})
+		return
+	}
+
+	version, err := strconv.Atoi(versionStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid version number"})
+		return
+	}
+
+	// For development, use mock user ID
+	authorID := uint(1)
+
+	newVersion, err := h.versionService.RollbackToVersion(uint(policyID), version, authorID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Policy rolled back successfully",
+		"version": newVersion,
+	})
+}
+
+// ComparePolicyVersions compares two versions of a policy
+func (h *PolicyHandler) ComparePolicyVersions(c *gin.Context) {
+	policyIDStr := c.Param("id")
+	v1Str := c.Param("v1")
+	v2Str := c.Param("v2")
+
+	policyID, err := strconv.ParseUint(policyIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid policy ID"})
+		return
+	}
+
+	v1, err := strconv.Atoi(v1Str)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid version 1"})
+		return
+	}
+
+	v2, err := strconv.Atoi(v2Str)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid version 2"})
+		return
+	}
+
+	diff, err := h.versionService.CompareVersions(uint(policyID), v1, v2)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, diff)
 }

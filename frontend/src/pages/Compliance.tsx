@@ -1,7 +1,20 @@
 import React from 'react';
-import { CheckSquare, FileText, TrendingUp, AlertTriangle } from 'lucide-react';
+import { CheckSquare, FileText, TrendingUp, AlertTriangle, Download } from 'lucide-react';
 
 export const Compliance: React.FC = () => {
+  const handleExportEvidence = async (framework: string) => {
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const url = `${API_URL}/api/v1/evidence/export?framework=${framework}&format=csv`;
+    const response = await fetch(url);
+    const blob = await response.blob();
+    
+    // Download file
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `${framework}-evidence-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -113,6 +126,13 @@ export const Compliance: React.FC = () => {
                     }`}>
                       {framework.status}
                     </p>
+                    <button
+                      onClick={() => handleExportEvidence(framework.name)}
+                      className="mt-2 inline-flex items-center px-3 py-1 text-xs font-medium border-2 border-niyama-black bg-niyama-accent-light hover:bg-niyama-accent text-niyama-black transition-colors"
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      Export
+                    </button>
                   </div>
                 </div>
               ))}
