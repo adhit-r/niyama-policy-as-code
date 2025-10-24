@@ -47,6 +47,13 @@ backend/.env
 ehthumbs.db
 Thumbs.db
 
+# Archive - Keep index/manifest, exclude generated artifacts
+.archive/ARCHIVE_INDEX.md
+.archive/ARCHIVE_MANIFEST.json
+.archive/reports/playwright-report/
+.archive/reports/test-results/
+.archive/reports/screenshots/
+
 # Logs
 logs/
 *.log
