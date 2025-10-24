@@ -60,6 +60,12 @@ Thumbs.db
 .archive/obsolete-files/
 .archive/backups/
 .archive/archived-scripts/
+# Keep index/manifest tracked; ignore generated reports/screenshots
+!.archive/ARCHIVE_INDEX.md
+!.archive/ARCHIVE_MANIFEST.json
+.archive/reports/playwright-report/
+.archive/reports/test-results/
+.archive/reports/screenshots/
 
 # Logs
 logs/
