@@ -1,3 +1,31 @@
+## Stage 1 Archive Actions (branch: archive-stage-1)
+
+Date: 2025-10-24
+
+Files moved in this stage (conservative set):
+
+- `.archive/old-docs/`
+   - CLEANUP_COMPLETE.md
+   - WORKSPACE_CLEANUP_LOG.md
+   - QUICK_REFERENCE.md
+   - GITHUB_PROJECT_SETUP.md
+   - ROADMAP_GITHUB_BOARD.md
+   - ROADMAP_STATUS.md
+   - test_mvp.md (if present at root)
+
+- `.archive/reports/` (if present at root)
+   - playwright-report/
+   - test-results/
+   - screenshots/
+
+- `.archive/obsolete-files/`
+   - bun.lock (if present)
+   - .DS_Store (if present)
+
+Notes:
+- These moves were made on branch `archive-stage-1` and committed with message: "chore(archive): conservative move of historical docs and reports to .archive".
+- All moved files are preserved in git history and can be restored via `git checkout <branch>` or `git restore`.
+- If you'd like the changes merged to `production-ready-workspace`, open a pull request from `archive-stage-1` and review.
 # 📦 Archive Index - Niyama Project
 
 **Date Created:** October 21, 2025  
