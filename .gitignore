@@ -54,6 +54,13 @@ Thumbs.db
 .archive/reports/test-results/
 .archive/reports/screenshots/
 
+# Archive - Additional exclusions
+.archive/old-docs/
+.archive/reports/
+.archive/obsolete-files/
+.archive/backups/
+.archive/archived-scripts/
+
 # Logs
 logs/
 *.log
