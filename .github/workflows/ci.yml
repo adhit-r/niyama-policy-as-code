@@ -67,7 +67,7 @@ jobs:
 
       - name: Cache Go modules
         if: steps.docs-only.outputs.docs_only != 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/go-build
@@ -78,7 +78,7 @@ jobs:
 
       - name: Cache Node modules
         if: steps.docs-only.outputs.docs_only != 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -131,7 +131,7 @@ jobs:
 
       - name: Upload backend coverage
         if: steps.docs-only.outputs.docs_only != 'true'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         continue-on-error: true
         with:
           file: ./backend-go/coverage.out
@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload frontend coverage
         if: steps.docs-only.outputs.docs_only != 'true'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         continue-on-error: true
         with:
           directory: ./frontend/coverage
@@ -325,7 +325,7 @@ jobs:
       - name: Upload backend artifact
         if: steps.workflow-only.outputs.workflow_only != 'true'
         continue-on-error: true
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: niyama-backend
           path: backend-go/niyama-backend
@@ -333,7 +333,7 @@ jobs:
       - name: Upload frontend artifact
         if: steps.workflow-only.outputs.workflow_only != 'true'
         continue-on-error: true
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: niyama-frontend
           path: frontend/dist
@@ -365,14 +365,14 @@ jobs:
       - name: Download backend artifact
         if: steps.workflow-only.outputs.workflow_only != 'true'
         continue-on-error: true
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: niyama-backend
 
       - name: Download frontend artifact
         if: steps.workflow-only.outputs.workflow_only != 'true'
         continue-on-error: true
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: niyama-frontend
 
