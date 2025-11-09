@@ -2,51 +2,6 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test-backend:
-    name: Test Suite — Backend (Go)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-
-      - name: Run backend tests
-        run: |
-          cd backend
-          go mod download
-          go test ./...
-
-  test-frontend:
-    name: Test Suite — Frontend (Bun)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: '1.x'
-
-      - name: Run frontend tests
-        run: |
-          cd frontend
-          bun install --no-save
-          bun test --reporter=dot
-
-name: CI/CD Pipeline
-
-on:
-  push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
@@ -133,7 +88,7 @@ jobs:
       - name: Install backend dependencies
         if: steps.docs-only.outputs.docs_only != 'true'
         run: |
-          cd backend-go || exit 0
+          cd backend || exit 0
           go mod download || exit 0
 
       - name: Install frontend dependencies
@@ -146,7 +101,7 @@ jobs:
         if: steps.docs-only.outputs.docs_only != 'true'
         continue-on-error: true
         run: |
-          cd backend-go || exit 0
+          cd backend || exit 0
           go test -v -race -coverprofile=coverage.out ./... || true
         env:
           DATABASE_URL: postgresql://niyama:niyama@localhost:5432/niyama_test
@@ -179,7 +134,7 @@ jobs:
         uses: codecov/codecov-action@v4
         continue-on-error: true
         with:
-          file: ./backend-go/coverage.out
+          file: ./backend/coverage.out
           flags: backend
 
       - name: Upload frontend coverage
@@ -246,7 +201,7 @@ jobs:
         if: steps.docs-only.outputs.docs_only != 'true'
         continue-on-error: true
         run: |
-          cd backend-go || exit 0
+          cd backend || exit 0
           go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest || exit 0
           gosec -quiet ./... || true
 
@@ -356,7 +311,7 @@ jobs:
         if: steps.workflow-only.outputs.workflow_only != 'true'
         continue-on-error: true
         run: |
-          cd backend-go || exit 0
+          cd backend || exit 0
           go build -o niyama-backend -ldflags="-s -w" . || true
 
       - name: Build frontend
@@ -373,7 +328,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: niyama-backend
-          path: backend-go/niyama-backend
+          path: backend/niyama-backend
 
       - name: Upload frontend artifact
         if: steps.workflow-only.outputs.workflow_only != 'true'
@@ -439,7 +394,7 @@ jobs:
         continue-on-error: true
         uses: docker/build-push-action@v5
         with:
-          context: ./backend-go
+          context: ./backend
           push: true
           tags: |
             niyama/backend:latest
