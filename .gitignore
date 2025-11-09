@@ -246,3 +246,7 @@ dev/
 # Archive directory for temporary/old files
 archive/
 >>>>>>> Incoming (Background Agent changes)
+
+# Archive directories
+.archive/
+.archive/*
