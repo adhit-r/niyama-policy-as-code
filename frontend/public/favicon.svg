@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Neo-Brutalist background -->
+  <rect width="32" height="32" fill="#ff6b35" stroke="black" stroke-width="2"/>
+  
+  <!-- "N" letterform with Neo-Brutalist style -->
+  <!-- Left vertical stroke -->
+  <rect x="8" y="6" width="3" height="20" fill="black"/>
+  <!-- Right vertical stroke -->
+  <rect x="21" y="6" width="3" height="20" fill="black"/>
+  <!-- Diagonal stroke -->
+  <rect x="15.5" y="6" width="2" height="20" fill="black" transform="rotate(45 16 16)"/>
+  
+  <!-- Policy "shield" accent -->
+  <rect x="21" y="6" width="4" height="4" fill="white" stroke="black" stroke-width="1"/>
+</svg>

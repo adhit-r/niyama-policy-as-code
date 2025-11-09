@@ -1,0 +1,736 @@
+{
+  "name": "Niyama Design System",
+  "version": "1.0.0",
+  "description": "New Brutalist Professional Design System for Niyama Policy as Code Platform",
+  "author": "Niyama Team",
+  "license": "MIT",
+  "designPhilosophy": {
+    "name": "New Brutalist Professional",
+    "description": "A modern interpretation of brutalist design principles with professional polish and enterprise-grade aesthetics",
+    "principles": [
+      "High contrast for accessibility",
+      "Minimal border radius for sharp edges",
+      "Bold typography with clear hierarchy",
+      "Consistent orange accent branding",
+      "Professional appearance without unnecessary decoration",
+      "Functional over decorative design"
+    ]
+  },
+  "colors": {
+    "primary": {
+      "black": {
+        "value": "#000000",
+        "description": "Primary black for text and borders",
+        "usage": "Main text, borders, primary buttons"
+      },
+      "white": {
+        "value": "#ffffff",
+        "description": "Primary white for backgrounds",
+        "usage": "Backgrounds, card surfaces, secondary text"
+      }
+    },
+    "accent": {
+      "orange": {
+        "value": "#ff6b35",
+        "description": "Primary orange accent color",
+        "usage": "Primary actions, highlights, branding"
+      },
+      "orangeDark": {
+        "value": "#e55a2b",
+        "description": "Darker orange for hover states",
+        "usage": "Button hover states, active elements"
+      },
+      "orangeLight": {
+        "value": "#ff8c69",
+        "description": "Lighter orange for subtle accents",
+        "usage": "Backgrounds, badges, subtle highlights"
+      }
+    },
+    "gray": {
+      "100": {
+        "value": "#f5f5f5",
+        "description": "Lightest gray for subtle backgrounds",
+        "usage": "Card headers, input backgrounds"
+      },
+      "200": {
+        "value": "#e5e5e5",
+        "description": "Light gray for borders and dividers",
+        "usage": "Subtle borders, dividers"
+      },
+      "300": {
+        "value": "#d4d4d4",
+        "description": "Medium light gray",
+        "usage": "Disabled states, subtle elements"
+      },
+      "400": {
+        "value": "#a3a3a3",
+        "description": "Medium gray for secondary text",
+        "usage": "Placeholder text, secondary information"
+      },
+      "500": {
+        "value": "#737373",
+        "description": "Medium gray for body text",
+        "usage": "Body text, descriptions"
+      },
+      "600": {
+        "value": "#525252",
+        "description": "Dark gray for emphasis",
+        "usage": "Emphasized text, labels"
+      },
+      "700": {
+        "value": "#404040",
+        "description": "Darker gray for headings",
+        "usage": "Secondary headings, important text"
+      },
+      "800": {
+        "value": "#262626",
+        "description": "Very dark gray",
+        "usage": "Dark mode backgrounds, contrast"
+      },
+      "900": {
+        "value": "#171717",
+        "description": "Darkest gray",
+        "usage": "Code backgrounds, dark surfaces"
+      }
+    },
+    "semantic": {
+      "success": {
+        "value": "#22c55e",
+        "description": "Success state color",
+        "usage": "Success messages, positive indicators"
+      },
+      "successLight": {
+        "value": "#dcfce7",
+        "description": "Light success background",
+        "usage": "Success backgrounds, badges"
+      },
+      "successDark": {
+        "value": "#16a34a",
+        "description": "Dark success color",
+        "usage": "Success hover states"
+      },
+      "warning": {
+        "value": "#f59e0b",
+        "description": "Warning state color",
+        "usage": "Warning messages, caution indicators"
+      },
+      "warningLight": {
+        "value": "#fef3c7",
+        "description": "Light warning background",
+        "usage": "Warning backgrounds, badges"
+      },
+      "warningDark": {
+        "value": "#d97706",
+        "description": "Dark warning color",
+        "usage": "Warning hover states"
+      },
+      "error": {
+        "value": "#ef4444",
+        "description": "Error state color",
+        "usage": "Error messages, danger indicators"
+      },
+      "errorLight": {
+        "value": "#fee2e2",
+        "description": "Light error background",
+        "usage": "Error backgrounds, badges"
+      },
+      "errorDark": {
+        "value": "#dc2626",
+        "description": "Dark error color",
+        "usage": "Error hover states"
+      },
+      "info": {
+        "value": "#3b82f6",
+        "description": "Info state color",
+        "usage": "Information messages, info indicators"
+      },
+      "purple": {
+        "value": "#8b5cf6",
+        "description": "Purple accent for AI features",
+        "usage": "AI-related elements, special features"
+      },
+      "purpleLight": {
+        "value": "#ede9fe",
+        "description": "Light purple background",
+        "usage": "AI feature backgrounds, badges"
+      },
+      "purpleDark": {
+        "value": "#7c3aed",
+        "description": "Dark purple color",
+        "usage": "AI feature hover states"
+      }
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": {
+        "value": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "description": "Primary font for body text and UI elements",
+        "usage": "Body text, buttons, forms, general UI"
+      },
+      "display": {
+        "value": "Space Grotesk, Inter, sans-serif",
+        "description": "Display font for headings and branding",
+        "usage": "Headings, titles, branding elements"
+      },
+      "mono": {
+        "value": "JetBrains Mono, 'Fira Code', 'Monaco', monospace",
+        "description": "Monospace font for code and technical content",
+        "usage": "Code blocks, technical text, inline code"
+      }
+    },
+    "fontWeights": {
+      "light": {
+        "value": "300",
+        "description": "Light font weight"
+      },
+      "normal": {
+        "value": "400",
+        "description": "Normal font weight"
+      },
+      "medium": {
+        "value": "500",
+        "description": "Medium font weight"
+      },
+      "semibold": {
+        "value": "600",
+        "description": "Semibold font weight"
+      },
+      "bold": {
+        "value": "700",
+        "description": "Bold font weight"
+      },
+      "black": {
+        "value": "900",
+        "description": "Black font weight"
+      }
+    },
+    "fontSizes": {
+      "xs": {
+        "value": "0.75rem",
+        "pixels": "12px",
+        "description": "Extra small text",
+        "usage": "Captions, fine print, labels"
+      },
+      "sm": {
+        "value": "0.875rem",
+        "pixels": "14px",
+        "description": "Small text",
+        "usage": "Secondary text, form labels"
+      },
+      "base": {
+        "value": "1rem",
+        "pixels": "16px",
+        "description": "Base text size",
+        "usage": "Body text, default size"
+      },
+      "lg": {
+        "value": "1.125rem",
+        "pixels": "18px",
+        "description": "Large text",
+        "usage": "Emphasized body text"
+      },
+      "xl": {
+        "value": "1.25rem",
+        "pixels": "20px",
+        "description": "Extra large text",
+        "usage": "Small headings"
+      },
+      "2xl": {
+        "value": "1.5rem",
+        "pixels": "24px",
+        "description": "2X large text",
+        "usage": "Medium headings"
+      },
+      "3xl": {
+        "value": "1.875rem",
+        "pixels": "30px",
+        "description": "3X large text",
+        "usage": "Large headings"
+      },
+      "4xl": {
+        "value": "2.25rem",
+        "pixels": "36px",
+        "description": "4X large text",
+        "usage": "Extra large headings"
+      },
+      "5xl": {
+        "value": "3rem",
+        "pixels": "48px",
+        "description": "5X large text",
+        "usage": "Display text"
+      },
+      "6xl": {
+        "value": "3.75rem",
+        "pixels": "60px",
+        "description": "6X large text",
+        "usage": "Hero text"
+      },
+      "7xl": {
+        "value": "4.5rem",
+        "pixels": "72px",
+        "description": "7X large text",
+        "usage": "Large hero text"
+      }
+    },
+    "lineHeights": {
+      "tight": {
+        "value": "1.1",
+        "description": "Tight line height for headings"
+      },
+      "snug": {
+        "value": "1.2",
+        "description": "Snug line height for subheadings"
+      },
+      "normal": {
+        "value": "1.5",
+        "description": "Normal line height for body text"
+      },
+      "relaxed": {
+        "value": "1.6",
+        "description": "Relaxed line height for readability"
+      }
+    },
+    "letterSpacing": {
+      "tight": {
+        "value": "-0.02em",
+        "description": "Tight letter spacing for large text"
+      },
+      "normal": {
+        "value": "0",
+        "description": "Normal letter spacing"
+      },
+      "wide": {
+        "value": "0.05em",
+        "description": "Wide letter spacing for labels"
+      }
+    }
+  },
+  "spacing": {
+    "scale": "Brutalist Grid System",
+    "baseUnit": "0.25rem (4px)",
+    "values": {
+      "1": {
+        "value": "0.25rem",
+        "pixels": "4px",
+        "description": "Extra small spacing"
+      },
+      "2": {
+        "value": "0.5rem",
+        "pixels": "8px",
+        "description": "Small spacing"
+      },
+      "3": {
+        "value": "0.75rem",
+        "pixels": "12px",
+        "description": "Medium small spacing"
+      },
+      "4": {
+        "value": "1rem",
+        "pixels": "16px",
+        "description": "Base spacing"
+      },
+      "5": {
+        "value": "1.25rem",
+        "pixels": "20px",
+        "description": "Medium spacing"
+      },
+      "6": {
+        "value": "1.5rem",
+        "pixels": "24px",
+        "description": "Large spacing"
+      },
+      "8": {
+        "value": "2rem",
+        "pixels": "32px",
+        "description": "Extra large spacing"
+      },
+      "10": {
+        "value": "2.5rem",
+        "pixels": "40px",
+        "description": "2X large spacing"
+      },
+      "12": {
+        "value": "3rem",
+        "pixels": "48px",
+        "description": "3X large spacing"
+      },
+      "16": {
+        "value": "4rem",
+        "pixels": "64px",
+        "description": "4X large spacing"
+      },
+      "20": {
+        "value": "5rem",
+        "pixels": "80px",
+        "description": "5X large spacing"
+      },
+      "24": {
+        "value": "6rem",
+        "pixels": "96px",
+        "description": "6X large spacing"
+      },
+      "32": {
+        "value": "8rem",
+        "pixels": "128px",
+        "description": "8X large spacing"
+      }
+    }
+  },
+  "borderRadius": {
+    "philosophy": "Minimal border radius for sharp, brutalist edges",
+    "values": {
+      "none": {
+        "value": "0",
+        "description": "No border radius for sharp edges"
+      },
+      "sm": {
+        "value": "0.125rem",
+        "pixels": "2px",
+        "description": "Small border radius"
+      },
+      "base": {
+        "value": "0.25rem",
+        "pixels": "4px",
+        "description": "Base border radius"
+      },
+      "md": {
+        "value": "0.375rem",
+        "pixels": "6px",
+        "description": "Medium border radius"
+      },
+      "lg": {
+        "value": "0.5rem",
+        "pixels": "8px",
+        "description": "Large border radius"
+      },
+      "xl": {
+        "value": "0.75rem",
+        "pixels": "12px",
+        "description": "Extra large border radius"
+      }
+    }
+  },
+  "shadows": {
+    "philosophy": "Brutalist shadows with hard edges and strong contrast",
+    "values": {
+      "sm": {
+        "value": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "description": "Small subtle shadow"
+      },
+      "base": {
+        "value": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+        "description": "Base shadow"
+      },
+      "md": {
+        "value": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "description": "Medium shadow"
+      },
+      "lg": {
+        "value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        "description": "Large shadow"
+      },
+      "brutal": {
+        "value": "4px 4px 0px 0px #000000",
+        "description": "Signature brutalist shadow"
+      },
+      "brutalLg": {
+        "value": "8px 8px 0px 0px #000000",
+        "description": "Large brutalist shadow"
+      },
+      "brutalSm": {
+        "value": "2px 2px 0px 0px #000000",
+        "description": "Small brutalist shadow"
+      }
+    }
+  },
+  "transitions": {
+    "durations": {
+      "fast": {
+        "value": "150ms",
+        "description": "Fast transition for micro-interactions"
+      },
+      "base": {
+        "value": "250ms",
+        "description": "Base transition duration"
+      },
+      "slow": {
+        "value": "350ms",
+        "description": "Slow transition for complex animations"
+      }
+    },
+    "easings": {
+      "easeInOut": {
+        "value": "ease-in-out",
+        "description": "Standard easing for most transitions"
+      },
+      "easeOut": {
+        "value": "ease-out",
+        "description": "Ease out for entrance animations"
+      },
+      "easeIn": {
+        "value": "ease-in",
+        "description": "Ease in for exit animations"
+      }
+    }
+  },
+  "zIndex": {
+    "scale": "Layered z-index system for proper stacking",
+    "values": {
+      "dropdown": {
+        "value": "1000",
+        "description": "Dropdown menus and overlays"
+      },
+      "sticky": {
+        "value": "1020",
+        "description": "Sticky elements"
+      },
+      "fixed": {
+        "value": "1030",
+        "description": "Fixed positioned elements"
+      },
+      "modalBackdrop": {
+        "value": "1040",
+        "description": "Modal backdrop"
+      },
+      "modal": {
+        "value": "1050",
+        "description": "Modal dialogs"
+      },
+      "popover": {
+        "value": "1060",
+        "description": "Popovers and tooltips"
+      },
+      "tooltip": {
+        "value": "1070",
+        "description": "Tooltips"
+      },
+      "toast": {
+        "value": "1080",
+        "description": "Toast notifications"
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "variants": {
+        "primary": {
+          "background": "#000000",
+          "color": "#ffffff",
+          "border": "2px solid #000000",
+          "shadow": "4px 4px 0px 0px #000000",
+          "hover": {
+            "transform": "translate(-2px, -2px)",
+            "shadow": "8px 8px 0px 0px #000000"
+          }
+        },
+        "secondary": {
+          "background": "#ffffff",
+          "color": "#000000",
+          "border": "2px solid #000000",
+          "shadow": "4px 4px 0px 0px #000000",
+          "hover": {
+            "background": "#f5f5f5",
+            "transform": "translate(-2px, -2px)",
+            "shadow": "8px 8px 0px 0px #000000"
+          }
+        },
+        "accent": {
+          "background": "#ff6b35",
+          "color": "#ffffff",
+          "border": "2px solid #ff6b35",
+          "shadow": "4px 4px 0px 0px #000000",
+          "hover": {
+            "background": "#e55a2b",
+            "transform": "translate(-2px, -2px)",
+            "shadow": "8px 8px 0px 0px #000000"
+          }
+        }
+      },
+      "sizes": {
+        "sm": {
+          "padding": "0.5rem 1rem",
+          "fontSize": "0.875rem"
+        },
+        "md": {
+          "padding": "0.75rem 1.5rem",
+          "fontSize": "1rem"
+        },
+        "lg": {
+          "padding": "1rem 2rem",
+          "fontSize": "1.125rem"
+        },
+        "xl": {
+          "padding": "1.25rem 2.5rem",
+          "fontSize": "1.25rem"
+        }
+      }
+    },
+    "card": {
+      "background": "#ffffff",
+      "border": "2px solid #000000",
+      "borderRadius": "0.25rem",
+      "shadow": "4px 4px 0px 0px #000000",
+      "hover": {
+        "transform": "translate(-2px, -2px)",
+        "shadow": "8px 8px 0px 0px #000000"
+      },
+      "header": {
+        "background": "#f5f5f5",
+        "borderBottom": "2px solid #000000",
+        "padding": "1.5rem"
+      },
+      "content": {
+        "padding": "1.5rem"
+      },
+      "footer": {
+        "background": "#f5f5f5",
+        "borderTop": "2px solid #000000",
+        "padding": "1.5rem"
+      }
+    },
+    "input": {
+      "background": "#ffffff",
+      "border": "2px solid #000000",
+      "borderRadius": "0.25rem",
+      "padding": "0.75rem 1rem",
+      "fontSize": "1rem",
+      "focus": {
+        "borderColor": "#ff6b35",
+        "shadow": "0 0 0 3px rgba(255, 107, 53, 0.1)"
+      }
+    },
+    "navigation": {
+      "background": "#ffffff",
+      "borderBottom": "2px solid #000000",
+      "padding": "1rem 1.5rem",
+      "brand": {
+        "fontFamily": "Space Grotesk",
+        "fontWeight": "900",
+        "fontSize": "1.5rem",
+        "color": "#000000"
+      },
+      "link": {
+        "color": "#404040",
+        "padding": "0.5rem 1rem",
+        "borderRadius": "0.25rem",
+        "hover": {
+          "color": "#000000",
+          "background": "#f5f5f5"
+        },
+        "active": {
+          "color": "#000000",
+          "background": "#f5f5f5"
+        }
+      }
+    }
+  },
+  "breakpoints": {
+    "sm": {
+      "value": "640px",
+      "description": "Small screens and up"
+    },
+    "md": {
+      "value": "768px",
+      "description": "Medium screens and up"
+    },
+    "lg": {
+      "value": "1024px",
+      "description": "Large screens and up"
+    },
+    "xl": {
+      "value": "1280px",
+      "description": "Extra large screens and up"
+    },
+    "2xl": {
+      "value": "1536px",
+      "description": "2X large screens and up"
+    }
+  },
+  "animations": {
+    "fadeIn": {
+      "keyframes": {
+        "0%": { "opacity": "0" },
+        "100%": { "opacity": "1" }
+      },
+      "duration": "0.3s",
+      "easing": "ease-out"
+    },
+    "slideUp": {
+      "keyframes": {
+        "0%": { "opacity": "0", "transform": "translateY(20px)" },
+        "100%": { "opacity": "1", "transform": "translateY(0)" }
+      },
+      "duration": "0.3s",
+      "easing": "ease-out"
+    },
+    "slideDown": {
+      "keyframes": {
+        "0%": { "opacity": "0", "transform": "translateY(-20px)" },
+        "100%": { "opacity": "1", "transform": "translateY(0)" }
+      },
+      "duration": "0.3s",
+      "easing": "ease-out"
+    },
+    "scaleIn": {
+      "keyframes": {
+        "0%": { "opacity": "0", "transform": "scale(0.95)" },
+        "100%": { "opacity": "1", "transform": "scale(1)" }
+      },
+      "duration": "0.2s",
+      "easing": "ease-out"
+    }
+  },
+  "accessibility": {
+    "contrastRatios": {
+      "normal": "4.5:1",
+      "large": "3:1"
+    },
+    "focusStates": {
+      "outline": "2px solid #ff6b35",
+      "outlineOffset": "2px"
+    },
+    "colorBlindSupport": {
+      "description": "Design uses high contrast and patterns in addition to color",
+      "patterns": [
+        "Bold borders and shadows",
+        "Clear typography hierarchy",
+        "Consistent spacing patterns"
+      ]
+    }
+  },
+  "usage": {
+    "guidelines": [
+      "Always use high contrast combinations",
+      "Maintain consistent spacing using the brutalist grid",
+      "Use orange accent sparingly for maximum impact",
+      "Prefer sharp edges over rounded corners",
+      "Ensure all interactive elements have clear hover states",
+      "Use brutalist shadows for depth and hierarchy",
+      "Maintain consistent typography hierarchy",
+      "Test all color combinations for accessibility"
+    ],
+    "do": [
+      "Use black borders on all cards and components",
+      "Apply brutalist shadows for depth",
+      "Use orange for primary actions and branding",
+      "Maintain high contrast ratios",
+      "Use consistent spacing from the grid system",
+      "Apply sharp, minimal border radius"
+    ],
+    "dont": [
+      "Use excessive border radius",
+      "Mix different shadow styles",
+      "Use low contrast color combinations",
+      "Overuse the orange accent color",
+      "Use decorative elements without purpose",
+      "Ignore accessibility guidelines"
+    ]
+  },
+  "implementation": {
+    "cssVariables": "All design tokens are available as CSS custom properties",
+    "tailwindConfig": "Extended Tailwind CSS configuration with custom values",
+    "componentLibrary": "React components following the design system",
+    "documentation": "Comprehensive usage examples and guidelines"
+  }
+}

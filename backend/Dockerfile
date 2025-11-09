@@ -1,51 +1,59 @@
 # Build stage
-FROM oven/bun:1-alpine AS builder
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json bun.lockb* ./
-
 # Install dependencies
-RUN bun install --production
+RUN apk add --no-cache git ca-certificates tzdata curl
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
 
 # Copy source code
 COPY . .
 
-# Build the application
-RUN bun run build
+# Build the application with optimizations
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -a -installsuffix cgo \
+    -ldflags='-w -s -extldflags "-static"' \
+    -o niyama-server cmd/server/main.go
 
 # Production stage
-FROM oven/bun:1-alpine
+FROM alpine:latest
+
+# Create non-root user
+RUN addgroup -g 1001 -S niyama && \
+    adduser -u 1001 -S niyama -G niyama
 
 WORKDIR /app
 
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
+# Install ca-certificates, timezone data, and curl for health checks
+RUN apk --no-cache add ca-certificates tzdata curl
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Copy the binary from builder stage
+COPY --from=builder /app/niyama-server .
 
-# Copy built application
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
+# Copy policies directory if it exists
+COPY --from=builder /app/policies ./policies 2>/dev/null || true
 
-# Create logs directory
-RUN mkdir -p logs && chown nodejs:nodejs logs
+# Copy configuration directory
+COPY --from=builder /app/config ./config 2>/dev/null || true
+
+# Change ownership to non-root user
+RUN chown -R niyama:niyama /app
 
 # Switch to non-root user
-USER nodejs
+USER niyama
 
 # Expose port
 EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD bun -e "require('http').get('http://localhost:8000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+  CMD curl -f http://localhost:8000/health || exit 1
 
-# Start the application
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "dist/index.js"]
-
+# Run the binary
+CMD ["./niyama-server", "-env=production"]

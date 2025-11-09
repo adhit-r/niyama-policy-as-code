@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: niyama
+  labels:
+    name: niyama
+    app: niyama
+    environment: production
+    version: v1.0.0
+  annotations:
+    description: "Niyama Policy as Code Platform"
+    contact: "devops@niyama.dev"
+    monitoring: "enabled"
