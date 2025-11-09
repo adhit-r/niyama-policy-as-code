@@ -240,13 +240,15 @@ transformers_cache/
 # Local development files
 local/
 dev/
-<<<<<<< Current (Your changes)
-=======
 
 # Archive directory for temporary/old files
 archive/
->>>>>>> Incoming (Background Agent changes)
 
 # Archive directories
 .archive/
 .archive/*
+
+# Go binaries
+backend/niyama-backend
+backend/server
+backend/bin/
