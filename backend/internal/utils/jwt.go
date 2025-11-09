@@ -7,6 +7,7 @@ import (
 	"niyama-backend/internal/models"
 
 	"github.com/golang-jwt/jwt/v5"
+    "github.com/google/uuid"
 )
 
 type Claims struct {
@@ -22,6 +23,7 @@ func GenerateJWT(user *models.User, secret string, expiration time.Duration) (st
 		Email:  user.Email,
 		Role:   string(user.Role),
 		RegisteredClaims: jwt.RegisteredClaims{
+            ID:        uuid.NewString(),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
