@@ -1,0 +1,128 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: niyama-scheduler
+  namespace: niyama
+  labels:
+    app: niyama-scheduler
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: niyama-scheduler
+        spec:
+          serviceAccountName: niyama-scheduler
+          containers:
+          - name: niyama-scheduler
+            image: niyama/scheduler:latest
+            imagePullPolicy: Always
+            env:
+            - name: NIYAMA_API_URL
+              value: "http://niyama-api:8000"
+            - name: SCHEDULER_MODE
+              value: "cronjob"
+            - name: LOG_LEVEL
+              value: "info"
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "256Mi"
+                cpu: "200m"
+            volumeMounts:
+            - name: config
+              mountPath: /etc/niyama
+              readOnly: true
+          volumes:
+          - name: config
+            configMap:
+              name: niyama-scheduler-config
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: niyama-scheduler
+  namespace: niyama
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: niyama-scheduler
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["networkpolicies"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["policy"]
+  resources: ["podsecuritypolicies"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: niyama-scheduler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: niyama-scheduler
+subjects:
+- kind: ServiceAccount
+  name: niyama-scheduler
+  namespace: niyama
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: niyama-scheduler-config
+  namespace: niyama
+data:
+  config.yaml: |
+    providers:
+      aws:
+        enabled: true
+        regions: ["us-east-1", "us-west-2"]
+        scan_filters:
+          resource_types: ["ec2-instance", "rds-instance", "s3-bucket"]
+      azure:
+        enabled: true
+        regions: ["eastus", "westus2"]
+        scan_filters:
+          resource_types: ["virtual-machine", "storage-account"]
+      gcp:
+        enabled: true
+        regions: ["us-central1", "us-east1"]
+        scan_filters:
+          resource_types: ["compute-instance", "storage-bucket"]
+      kubernetes:
+        enabled: true
+        scan_filters:
+          resource_types: ["pod", "deployment", "service"]
+    
+    drift_detection:
+      enabled: true
+      baseline_retention_days: 30
+      comparison_window_hours: 24
+    
+    notifications:
+      enabled: true
+      webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      email:
+        smtp_host: "smtp.gmail.com"
+        smtp_port: 587
+        username: "niyama@company.com"
+        password: "your-app-password"
+        recipients: ["security@company.com", "ops@company.com"]
+

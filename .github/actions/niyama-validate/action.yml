@@ -1,0 +1,37 @@
+name: 'Niyama Policy Validation'
+description: 'Validate IaC files against Niyama policies'
+inputs:
+  niyama-url:
+    description: 'Niyama API URL'
+    required: true
+    default: 'http://localhost:8000'
+  file-patterns:
+    description: 'File patterns to validate (e.g., "**/*.yaml,**/*.tf")'
+    required: true
+    default: '**/*.yaml'
+    
+runs:
+  using: 'composite'
+  steps:
+    - name: Collect IaC files
+      shell: bash
+      run: |
+        echo "Collecting files matching: ${{ inputs.file-patterns }}"
+        # Create JSON payload
+        
+    - name: Validate with Niyama
+      shell: bash
+      run: |
+        curl -X POST "${{ inputs.niyama-url }}/api/v1/validate/iac" \
+          -H "Content-Type: application/json" \
+          -d @payload.json \
+          -o result.json
+        
+        # Check status
+        STATUS=$(jq -r '.status' result.json)
+        if [ "$STATUS" = "fail" ]; then
+          echo "Policy violations found!"
+          jq '.violations' result.json
+          exit 1
+        fi
+

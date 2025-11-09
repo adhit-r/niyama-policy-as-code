@@ -90,7 +90,7 @@ func (h *AIHandler) OptimizePolicy(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"policy_id": policyID,
+		"policy_id":        policyID,
 		"optimized_policy": optimized,
 	})
 }

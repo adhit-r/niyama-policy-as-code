@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 import { 
   Policy,
   PolicyTemplate,
@@ -35,15 +35,29 @@ class ApiService {
       }
     );
 
-    // Response interceptor
+    // Response interceptor with retry logic
     this.api.interceptors.response.use(
       (response) => response,
-      async (error) => {
-        if (error.response?.status === 401) {
-          // Redirect to sign-in if unauthorized
-          window.location.href = '/sign-in';
+      async (error: AxiosError) => {
+        const config = error.config as any;
+        
+        // Don't retry if already retried or if it's not a server error
+        if (config._retryCount >= 3 || !error.response || error.response.status < 500) {
+          if (error.response?.status === 401) {
+            // Redirect to sign-in if unauthorized
+            window.location.href = '/sign-in';
+          }
+          return Promise.reject(error);
         }
-        return Promise.reject(error);
+
+        // Retry logic for server errors
+        config._retryCount = (config._retryCount || 0) + 1;
+        const delay = Math.pow(2, config._retryCount) * 1000; // Exponential backoff
+        
+        console.log(`Retrying request (attempt ${config._retryCount}/3) after ${delay}ms`);
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.api(config);
       }
     );
   }
@@ -164,6 +178,50 @@ class ApiService {
 
   async deleteUser(id: string): Promise<void> {
     await this.api.delete(`/users/${id}`);
+  }
+
+  // User Stats
+  async getUserStats(): Promise<any> {
+    const response = await this.api.get('/user/stats');
+    return response.data;
+  }
+
+  // Policy History
+  async getPolicyHistory(limit?: number): Promise<any[]> {
+    const response = await this.api.get('/history', { 
+      params: { limit: limit || 10 } 
+    });
+    return response.data.evaluations || [];
+  }
+
+  // Validation
+  async validateIaC(files: File[]): Promise<any> {
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append('files', file);
+    });
+    
+    const response = await this.api.post('/validate/iac', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
+
+  // Detect endpoint (alias for validate)
+  async detectUpload(files: File[]): Promise<any> {
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append('files', file);
+    });
+    
+    const response = await this.api.post('/detect/test-upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
   }
 }
 

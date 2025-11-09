@@ -30,7 +30,8 @@ type DatabaseConfig struct {
 }
 
 type RedisConfig struct {
-	URL string
+	URL      string
+	Optional bool
 }
 
 type JWTConfig struct {
@@ -70,7 +71,8 @@ func Load() *Config {
 			MinConns: getIntEnv("DB_MIN_CONNS", 5),
 		},
 		Redis: RedisConfig{
-			URL: getEnv("REDIS_URL", "redis://localhost:6379"),
+			URL:      getEnv("REDIS_URL", ""),
+			Optional: getEnv("REDIS_OPTIONAL", "true") == "true",
 		},
 		JWT: JWTConfig{
 			Secret:            getEnv("JWT_SECRET", "your_super_secret_jwt_key_here"),

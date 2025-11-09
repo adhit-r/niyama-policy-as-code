@@ -96,4 +96,3 @@ func GetGlobalPermissionsForRole(role GlobalUserRole) []Permission {
 		return []Permission{}
 	}
 }
-
