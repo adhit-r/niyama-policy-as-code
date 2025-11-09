@@ -191,15 +191,15 @@ export function formatNumber(num: number): string {
 export function getSeverityColor(severity: string): string {
   switch (severity.toLowerCase()) {
     case 'critical':
-      return 'text-danger-600 bg-danger-100';
+      return 'text-niyama-error bg-niyama-error-light';
     case 'high':
-      return 'text-danger-600 bg-danger-100';
+      return 'text-niyama-error bg-niyama-error-light';
     case 'medium':
-      return 'text-warning-600 bg-warning-100';
+      return 'text-niyama-warning bg-niyama-warning-light';
     case 'low':
-      return 'text-success-600 bg-success-100';
+      return 'text-niyama-success bg-niyama-success-light';
     default:
-      return 'text-slate-600 bg-slate-100';
+      return 'text-niyama-gray-600 bg-niyama-gray-100';
   }
 }
 
@@ -208,19 +208,19 @@ export function getStatusColor(status: string): string {
     case 'active':
     case 'compliant':
     case 'success':
-      return 'text-success-600 bg-success-100';
+      return 'text-niyama-success bg-niyama-success-light';
     case 'inactive':
     case 'non-compliant':
     case 'error':
-      return 'text-danger-600 bg-danger-100';
+      return 'text-niyama-error bg-niyama-error-light';
     case 'warning':
     case 'partial':
-      return 'text-warning-600 bg-warning-100';
+      return 'text-niyama-warning bg-niyama-warning-light';
     case 'pending':
     case 'draft':
-      return 'text-slate-600 bg-slate-100';
+      return 'text-niyama-gray-600 bg-niyama-gray-100';
     default:
-      return 'text-slate-600 bg-slate-100';
+      return 'text-niyama-gray-600 bg-niyama-gray-100';
   }
 }
 
@@ -240,6 +240,8 @@ export function retry<T>(
     throw err;
   });
 }
+
+
 
 
 

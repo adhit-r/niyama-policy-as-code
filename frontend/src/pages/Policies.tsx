@@ -7,10 +7,10 @@ export const Policies: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-display font-semibold text-charcoal-800">
+          <h1 className="text-display font-semibold text-niyama-black">
             Policies
           </h1>
-          <p className="mt-2 text-body text-slate-600">
+          <p className="mt-2 text-body text-niyama-gray-600">
             Manage your Policy as Code rules and configurations
           </p>
         </div>
@@ -27,12 +27,12 @@ export const Policies: React.FC = () => {
         <div className="card">
           <div className="card-content">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-primary-100">
-                <Shield className="h-6 w-6 text-primary-600" />
+              <div className="p-3 bg-niyama-info-light border-2 border-niyama-black">
+                <Shield className="h-6 w-6 text-niyama-info" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Total Policies</p>
-                <p className="text-2xl font-bold text-charcoal-800">24</p>
+                <p className="text-sm font-medium text-niyama-gray-600">Total Policies</p>
+                <p className="text-2xl font-bold text-niyama-black">24</p>
               </div>
             </div>
           </div>
@@ -41,12 +41,12 @@ export const Policies: React.FC = () => {
         <div className="card">
           <div className="card-content">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-danger-100">
-                <AlertTriangle className="h-6 w-6 text-danger-600" />
+              <div className="p-3 bg-niyama-error-light border-2 border-niyama-black">
+                <AlertTriangle className="h-6 w-6 text-niyama-error" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Active Violations</p>
-                <p className="text-2xl font-bold text-charcoal-800">3</p>
+                <p className="text-sm font-medium text-niyama-gray-600">Active Violations</p>
+                <p className="text-2xl font-bold text-niyama-black">3</p>
               </div>
             </div>
           </div>
@@ -55,12 +55,12 @@ export const Policies: React.FC = () => {
         <div className="card">
           <div className="card-content">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-success-100">
-                <CheckCircle className="h-6 w-6 text-success-600" />
+              <div className="p-3 bg-niyama-success-light border-2 border-niyama-black">
+                <CheckCircle className="h-6 w-6 text-niyama-success" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Compliance Rate</p>
-                <p className="text-2xl font-bold text-charcoal-800">87%</p>
+                <p className="text-sm font-medium text-niyama-gray-600">Compliance Rate</p>
+                <p className="text-2xl font-bold text-niyama-black">87%</p>
               </div>
             </div>
           </div>
@@ -76,9 +76,9 @@ export const Policies: React.FC = () => {
         </div>
         <div className="card-content">
           <div className="text-center py-12">
-            <Shield className="mx-auto h-12 w-12 text-slate-400" />
-            <h3 className="mt-2 text-sm font-medium text-charcoal-800">No policies yet</h3>
-            <p className="mt-1 text-sm text-slate-500">
+            <Shield className="mx-auto h-12 w-12 text-niyama-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-niyama-black">No policies yet</h3>
+            <p className="mt-1 text-sm text-niyama-gray-500">
               Get started by creating your first policy or importing from templates.
             </p>
             <div className="mt-6">
@@ -96,6 +96,8 @@ export const Policies: React.FC = () => {
     </div>
   );
 };
+
+
 
 
 

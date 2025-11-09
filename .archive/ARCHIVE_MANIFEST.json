@@ -1,0 +1,194 @@
+{
+  "archive": {
+    "version": "1.0",
+    "created": "2025-10-21T00:00:00Z",
+    "purpose": "Organized storage for non-essential files and historical documentation",
+    "workspace_status": "Production-Ready",
+    "directories": {
+      "old-docs": {
+        "purpose": "Previous iteration analysis and documentation",
+        "files": [
+          {
+            "name": "ANALYSIS_REPORT.md",
+            "size": "~11 KB",
+            "type": "documentation",
+            "archived_reason": "Superseded by ROADMAP_GITHUB_BOARD.md",
+            "status": "reference-only",
+            "last_updated": "Earlier session"
+          },
+          {
+            "name": "ISSUES_AND_FIXES.md",
+            "size": "~33 KB",
+            "type": "documentation",
+            "archived_reason": "All issues now in GitHub Project #6",
+            "status": "reference-only",
+            "contains": "50+ code examples, 25+ test procedures"
+          },
+          {
+            "name": "ISSUES_INDEX.md",
+            "size": "~10 KB",
+            "type": "documentation",
+            "archived_reason": "Replaced by GitHub project organization",
+            "status": "reference-only"
+          },
+          {
+            "name": "ISSUES_SUMMARY.md",
+            "size": "~7 KB",
+            "type": "documentation",
+            "archived_reason": "Priority matrix no longer needed",
+            "status": "reference-only"
+          },
+          {
+            "name": "IMPLEMENTATION_CHECKLIST.md",
+            "size": "~13 KB",
+            "type": "documentation",
+            "archived_reason": "Integrated into ROADMAP_GITHUB_BOARD.md",
+            "status": "reference-only"
+          },
+          {
+            "name": "DELIVERABLES.md",
+            "size": "~9 KB",
+            "type": "documentation",
+            "archived_reason": "Covered by ROADMAP_STATUS.md",
+            "status": "reference-only"
+          }
+        ]
+      },
+      "reports": {
+        "purpose": "Test reports, quality metrics, and screenshots",
+        "files": [
+          {
+            "name": "test_mvp.md",
+            "type": "test-documentation",
+            "archived_reason": "Historical MVP testing notes",
+            "status": "reference-only",
+            "regenerate": "Manual - not auto-generated"
+          },
+          {
+            "name": "playwright-report/",
+            "type": "test-artifacts",
+            "archived_reason": "Generated test reports",
+            "status": "regenerable",
+            "regenerate_command": "npm run test:e2e",
+            "size": "~15 MB"
+          },
+          {
+            "name": "test-results/",
+            "type": "test-artifacts",
+            "archived_reason": "Archived test execution results",
+            "status": "regenerable",
+            "regenerate_command": "make test",
+            "size": "~20 MB"
+          },
+          {
+            "name": "screenshots/",
+            "type": "ui-artifacts",
+            "archived_reason": "Historical UI screenshots",
+            "status": "regenerable",
+            "note": "Updated screenshots in frontend/public/",
+            "size": "~15 MB"
+          }
+        ]
+      },
+      "obsolete-files": {
+        "purpose": "Deprecated and system files",
+        "files": [
+          {
+            "name": "setup-multi-agent.sh",
+            "type": "script",
+            "archived_reason": "Multi-agent workflows documented in .github/copilot-instructions.md",
+            "status": "deprecated",
+            "note": "No longer needed - workflows are documented"
+          },
+          {
+            "name": "bun.lock",
+            "type": "package-manager-lock",
+            "archived_reason": "Project uses npm, not bun",
+            "status": "obsolete",
+            "replacement": "package-lock.json"
+          },
+          {
+            "name": ".DS_Store",
+            "type": "system-file",
+            "archived_reason": "macOS system file",
+            "status": "system-artifact",
+            "action": "Added .DS_Store to .gitignore"
+          }
+        ]
+      },
+      "backups": {
+        "purpose": "Emergency backups and recovery files",
+        "status": "ready-for-use",
+        "note": "Currently empty - populated as needed"
+      },
+      "archived-scripts": {
+        "purpose": "Old utility and setup scripts",
+        "status": "ready-for-use",
+        "note": "Currently empty - populated as needed"
+      }
+    },
+    "workspace_cleanup": {
+      "date": "2025-10-21",
+      "files_archived": 13,
+      "total_size_freed": "~90 MB",
+      "changes": [
+        "Moved 6 documentation files to .archive/old-docs/",
+        "Moved 4 report/test items to .archive/reports/",
+        "Moved 3 system files to .archive/obsolete-files/",
+        "Updated .gitignore to exclude .archive/*",
+        "Created ARCHIVE_INDEX.md with detailed documentation",
+        "Kept all essential source code and current documentation active"
+      ]
+    },
+    "active_workspace_files": {
+      "documentation": [
+        "README.md",
+        "ROADMAP_STATUS.md",
+        "ROADMAP_GITHUB_BOARD.md",
+        "GITHUB_PROJECT_SETUP.md"
+      ],
+      "source_code": [
+        "backend/",
+        "frontend/",
+        "tests/"
+      ],
+      "infrastructure": [
+        "infrastructure/",
+        "k8s/",
+        "config/"
+      ],
+      "configuration": [
+        "Makefile",
+        "package.json",
+        "docker-compose.yml",
+        "playwright.config.ts"
+      ]
+    },
+    "archive_guidelines": {
+      "do": [
+        "Reference archive files when needed",
+        "Keep archive in version control",
+        "Document why files are archived",
+        "Periodically audit archive contents",
+        "Use for historical context"
+      ],
+      "dont": [
+        "Delete archive files permanently",
+        "Restore without tracking in git",
+        "Use archive as primary data source",
+        "Commit changes to archived files",
+        "Ignore archive directory in .gitignore"
+      ]
+    },
+    "maintenance": {
+      "frequency": "Quarterly",
+      "tasks": [
+        "Review archive growth",
+        "Move old branches to VERSION_HISTORY",
+        "Document new snapshots",
+        "Verify all files are accessible",
+        "Update ARCHIVE_INDEX.md as needed"
+      ]
+    }
+  }
+}

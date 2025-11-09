@@ -1,43 +1,25 @@
-// User and Authentication Types
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
-  organizationId: string;
-  isActive: boolean;
-  lastLoginAt?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
+// User Role Types (for business logic)
 export enum UserRole {
   ADMIN = 'admin',
-  COMPLIANCE_OFFICER = 'compliance_officer',
-  DEVSECOPS_ENGINEER = 'devsecops_engineer',
-  PLATFORM_ENGINEER = 'platform_engineer',
-  VIEWER = 'viewer',
+  COMPLIANCE = 'compliance',
+  DEVELOPER = 'developer',
+  AUDITOR = 'auditor',
+  USER = 'user',
 }
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  organizationName: string;
-}
+// Permission types for RBAC
+export type Permission = 
+  | 'policy:create'
+  | 'policy:read'
+  | 'policy:update'
+  | 'policy:delete'
+  | 'policy:execute'
+  | 'user:manage'
+  | 'org:manage'
+  | 'compliance:view'
+  | 'compliance:manage'
+  | 'audit:view'
+  | 'audit:manage';
 
 // Policy Types
 export interface Policy {
@@ -434,7 +416,3 @@ export interface FilterParams {
   dateFrom?: string;
   dateTo?: string;
 }
-
-
-
-

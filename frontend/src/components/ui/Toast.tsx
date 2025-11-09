@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -10,17 +9,13 @@ export interface Toast {
   title: string;
   message?: string;
   duration?: number;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
 }
 
 interface ToastContextType {
   toasts: Toast[];
   addToast: (toast: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
-  clearAll: () => void;
+  clearToasts: () => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -34,7 +29,7 @@ export const useToast = () => {
 };
 
 interface ToastProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
@@ -43,24 +38,31 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substr(2, 9);
     const newToast: Toast = {
-      id,
-      duration: 5000,
       ...toast,
+      id,
+      duration: toast.duration || 5000,
     };
-    
+
     setToasts(prev => [...prev, newToast]);
+
+    // Auto remove toast after duration
+    if (newToast.duration > 0) {
+      setTimeout(() => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+      }, newToast.duration);
+    }
   }, []);
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
-  const clearAll = useCallback(() => {
+  const clearToasts = useCallback(() => {
     setToasts([]);
   }, []);
 
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast, clearAll }}>
+    <ToastContext.Provider value={{ toasts, addToast, removeToast, clearToasts }}>
       {children}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
@@ -88,127 +90,94 @@ interface ToastItemProps {
 }
 
 const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Trigger animation
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (toast.duration && toast.duration > 0) {
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(() => onRemove(toast.id), 300); // Wait for animation
-      }, toast.duration);
-      return () => clearTimeout(timer);
-    }
-  }, [toast.duration, toast.id, onRemove]);
-
-  const handleRemove = () => {
-    setIsVisible(false);
-    setTimeout(() => onRemove(toast.id), 300);
-  };
-
   const getIcon = () => {
     switch (toast.type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-niyama-success" />;
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
       case 'error':
-        return <AlertCircle className="w-5 h-5 text-niyama-error" />;
+        return <AlertCircle className="w-5 h-5 text-red-600" />;
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-niyama-warning" />;
+        return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
       case 'info':
-        return <Info className="w-5 h-5 text-niyama-info" />;
-      default:
-        return <Info className="w-5 h-5 text-niyama-gray-600" />;
+        return <Info className="w-5 h-5 text-blue-600" />;
+    }
+  };
+
+  const getBorderColor = () => {
+    switch (toast.type) {
+      case 'success':
+        return 'border-green-500';
+      case 'error':
+        return 'border-red-500';
+      case 'warning':
+        return 'border-yellow-500';
+      case 'info':
+        return 'border-blue-500';
     }
   };
 
   const getBackgroundColor = () => {
     switch (toast.type) {
       case 'success':
-        return 'bg-niyama-success border-niyama-success';
+        return 'bg-green-50';
       case 'error':
-        return 'bg-niyama-error border-niyama-error';
+        return 'bg-red-50';
       case 'warning':
-        return 'bg-niyama-warning border-niyama-warning';
+        return 'bg-yellow-50';
       case 'info':
-        return 'bg-niyama-info border-niyama-info';
-      default:
-        return 'bg-niyama-white border-niyama-black';
+        return 'bg-blue-50';
     }
   };
 
   return (
     <div
-      className={cn(
-        'max-w-sm w-full bg-niyama-white border-2 border-niyama-black shadow-brutal p-4 transition-all duration-300 ease-in-out',
-        isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0',
-        getBackgroundColor()
-      )}
+      className={`
+        ${getBackgroundColor()}
+        border-2 ${getBorderColor()}
+        shadow-brutal-lg
+        p-4 rounded-lg
+        max-w-sm
+        transform transition-all duration-300 ease-in-out
+        hover:shadow-brutal-xl
+      `}
     >
-      <div className="flex items-start space-x-3">
-        <div className="flex-shrink-0">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
           {getIcon()}
         </div>
-        
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-bold text-niyama-black">
+          <h4 className="font-bold text-gray-900 text-sm">
             {toast.title}
           </h4>
           {toast.message && (
-            <p className="mt-1 text-sm text-niyama-gray-700">
+            <p className="text-gray-600 text-sm mt-1">
               {toast.message}
             </p>
           )}
-          {toast.action && (
-            <button
-              onClick={toast.action.onClick}
-              className="mt-2 text-sm font-medium text-niyama-black hover:text-niyama-gray-600 underline"
-            >
-              {toast.action.label}
-            </button>
-          )}
         </div>
-        
         <button
-          onClick={handleRemove}
-          className="flex-shrink-0 p-1 hover:bg-niyama-gray-100 rounded transition-colors"
+          onClick={() => onRemove(toast.id)}
+          className="flex-shrink-0 p-1 hover:bg-gray-200 rounded transition-colors"
         >
-          <X className="w-4 h-4 text-niyama-gray-600" />
+          <X className="w-4 h-4 text-gray-500" />
         </button>
       </div>
     </div>
   );
 };
 
-// Convenience hooks for different toast types
-export const useToastSuccess = () => {
+// Convenience functions for common toast types
+export const useToastHelpers = () => {
   const { addToast } = useToast();
-  return useCallback((title: string, message?: string) => {
-    addToast({ type: 'success', title, message });
-  }, [addToast]);
-};
 
-export const useToastError = () => {
-  const { addToast } = useToast();
-  return useCallback((title: string, message?: string) => {
-    addToast({ type: 'error', title, message });
-  }, [addToast]);
-};
-
-export const useToastWarning = () => {
-  const { addToast } = useToast();
-  return useCallback((title: string, message?: string) => {
-    addToast({ type: 'warning', title, message });
-  }, [addToast]);
-};
-
-export const useToastInfo = () => {
-  const { addToast } = useToast();
-  return useCallback((title: string, message?: string) => {
-    addToast({ type: 'info', title, message });
-  }, [addToast]);
+  return {
+    success: (title: string, message?: string) =>
+      addToast({ type: 'success', title, message }),
+    error: (title: string, message?: string) =>
+      addToast({ type: 'error', title, message }),
+    warning: (title: string, message?: string) =>
+      addToast({ type: 'warning', title, message }),
+    info: (title: string, message?: string) =>
+      addToast({ type: 'info', title, message }),
+  };
 };

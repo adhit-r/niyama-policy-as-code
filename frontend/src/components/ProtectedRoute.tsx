@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth, useUser } from '@clerk/clerk-react';
 import { LoadingSpinner } from './ui/LoadingSpinner';
 
 interface ProtectedRouteProps {
@@ -8,10 +8,11 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { user } = useUser();
   const location = useLocation();
 
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="lg" />
@@ -19,13 +20,19 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated) {
-    // Redirect to login page with return url
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!isSignedIn || !user) {
+    // Redirect to sign-in page with return url
+    return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
 };
+
+
+
+
+
+
 
 
 
