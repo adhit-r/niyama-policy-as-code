@@ -236,6 +236,9 @@ func setupRouter(handlers *handlers.Handlers, cfg *config.Config, db *database.D
 		{
 			ai.POST("/generate-policy", handlers.AI.GeneratePolicy)
 			ai.POST("/optimize-policy/:id", handlers.AI.OptimizePolicy)
+			ai.POST("/detect-conflicts", handlers.AI.DetectConflicts)
+			ai.POST("/analyze-compliance-gaps/:id", handlers.AI.AnalyzeComplianceGaps)
+			ai.POST("/assess-impact/:id", handlers.AI.AssessImpact)
 		}
 
 		// Monitoring routes
